@@ -24,6 +24,9 @@ hmmlearn = "^0.3.3"
 celery = "^5.5.2"
 pyts = "^0.13.0"
 pmdarima = "^2.0.4"
+distinctipy = "^1.2.3"
+pgmpy = "^0.1.25"
+mchmm = "^0.4.5"
 
 
 [tool.poetry.group.dev.dependencies]

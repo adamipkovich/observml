@@ -85,15 +85,19 @@ class Experiment(Protocol):
         self.experiment_id = experiment_id
         self.run_id = run_id
 
-    def format_data(self, data : str, format : dict = None) -> pd.DataFrame:
+    def format_data(self, data, format : dict = None) -> pd.DataFrame:
         """This function will provide a function to recover data from nonstandard json as pd.Dataframe.
         Parameters:
-            data (str) : data in json format
+            data : data in json format or DataFrame
             format (dict) : settings for formatting. If None, then default pd.read_json is used."""
 
         if format is None:
-            data = pd.read_json(data)
-            return data
+            if isinstance(data, pd.DataFrame):
+                return data
+            else:
+                from io import StringIO
+                data = pd.read_json(StringIO(data))
+                return data
         else:
             if format.get("name", "pivot") == "pivot":
                 data = json.loads(data)
@@ -427,4 +431,3 @@ def load_object(module : str, name: str) -> any:
 #         fig.add_trace(scatterfig, row=1, col=1)
 #         if not update_fig:
 #             self.exp.model._figs["spc"] = fig
-

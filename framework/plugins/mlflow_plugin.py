@@ -25,7 +25,7 @@ class MLflowPlugin(MLOpsPlugin):
         """Check if MLflow plugin is working correctly"""
         try:
             # Try to connect to MLflow server
-            self.client.list_experiments()
+            self.client.search_experiments()
             return True, {"status": "connected", "uri": self.mlflow_uri}
         except Exception as e:
             return False, {"status": "error", "message": str(e), "uri": self.mlflow_uri}

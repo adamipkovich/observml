@@ -28,7 +28,8 @@ def train_experiment(name: str, cfg: dict, data_json: str,
         datastream_plugin: Optional DataStream plugin instance
     """
     # Parse data
-    data = pd.read_json(data_json)
+    from io import StringIO
+    data = pd.read_json(StringIO(data_json))
     
     # Get experiment class
     interface = cfg["load_object"]["name"]
@@ -84,7 +85,8 @@ def predict_experiment(name: str, run_id: str, data_json: str,
     experiment = load_experiment(name, run_id, mlops_plugin)
     
     # Parse data
-    data = pd.read_json(data_json)
+    from io import StringIO
+    data = pd.read_json(StringIO(data_json))
     
     # Make predictions
     predictions = experiment.predict(data)
