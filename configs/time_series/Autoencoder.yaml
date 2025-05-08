@@ -1,0 +1,22 @@
+load_object :
+  module: framework.TimeSeriesAnalysis
+  name:  TimeSeriesAnomalyExperiment
+setup: 
+    datetime_column : "ds"
+    datetime_format : "ms" # 2018.04.21  11:53:00 # https://docs.python.org/3/library/datetime.html#strftime-and-strptime-behavior
+    target : "y"
+
+eda:
+create_model :
+    model : "ae" # Random Forest
+    params:
+      layer_no : 6
+      window : 250 
+      epoch_no : 10
+      batch_size : 64
+      shuffle : False
+      threshold_for_anomaly : 3
+      neuron_no_enc : [30, 25, 20, 15, 10,5]
+      neuron_no_dec : [5,10, 15, 20, 25, 30]
+      act_enc : 'relu'
+      act_dec : 'relu'

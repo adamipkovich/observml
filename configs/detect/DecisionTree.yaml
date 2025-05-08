@@ -1,0 +1,19 @@
+##Add pycaret function params here
+load_object :
+  module: framework.FaultIsolation
+  name: FaultIsolationExperiment
+setup:
+    datetime_column : ds
+    datetime_format : "ms" 
+    predict_window : ## how much samples to show. if empty, it will show all.
+    target : "Output (S)"
+    #retrain :
+      #retrain_window : 5000 ## if none, retrain on all data.
+      #metric : "Accuracy" ## depending on experiment -> Accuracy, F1, Precision, Recall
+      #metric_threshold : 0.9 ## if we get this, retrain
+      #higher_better : True ## less or more if this threshold is bad performance?
+eda:
+create_model :
+    model : "dt" #"ee" #"dbscan" #"pca"
+    params:
+

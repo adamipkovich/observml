@@ -1,0 +1,14 @@
+/mlartifacts
+/mlruns
+/obsolete
+/example
+*.pkl
+metadata.yaml
+/runs
+*.db
+*.py[cod]
+.web
+/__pycache__
+/.venv
+/.idea
+/framework/__pycache__

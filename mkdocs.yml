@@ -1,0 +1,31 @@
+site_name: MMLW
+nav :
+  - Home : index.md
+  
+  - "Setting up the application": 
+    - "Local Use" : localdev.md
+    - "Deploying to Docker" : serve.md
+    - "Client-side Use and Testing": client.md
+  
+  - Package:
+    - Models: models.md
+    - Experiment: experiments.md
+    - "Test Results" : test_results.md
+  
+  #- "Know-how":
+
+plugins:
+  - print-site # pip install mkdocs-pdf-export-plugin + /print_page/ + print browser
+  - search
+  - mkdocstrings:
+      handlers:
+        python:
+          setup_commands:
+            - import sys
+            - sys.path.append('../')
+          selection:
+            new_path_syntax: true
+
+
+theme: readthedocs
+

@@ -1,0 +1,16 @@
+##Add pycaret function params here
+load_object :
+  module: framework.TimeSeriesAnalysis
+  name:  TimeSeriesAnomalyExperiment
+setup: 
+    datetime_column : "DATE"
+    datetime_format : "%d/%m/%Y" 
+    target : "IPG2211A2N"
+    
+eda:
+create_model :
+    model : "prophet" # Random Forest
+    params:
+      periods : 0
+      factor : 1.0
+      # TODO: Add hyperparameters : 

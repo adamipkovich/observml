@@ -1,0 +1,58 @@
+services:
+  rabbit:
+    image: rabbitmq:3.12.14-management-alpine
+    ports:
+      - 5100:5672
+      - 15100:15672
+    networks:
+       - mml_network
+    restart:
+      on-failure
+  mlflow:
+    image: mmlw:mlflow
+    ports:
+      - 5000:5000
+    networks:
+      - mml_network 
+    restart:
+      on-failure
+  backend:
+    image: mmlw:backend
+    ports :
+      - 8010:8010
+    depends_on:
+      rabbit :
+        condition: service_started
+      mlflow :
+        condition: service_started
+    environment:
+      MLFLOW_URI : "http://mlflow:5000"
+      RABBIT_HOST : "rabbit"
+      RABBIT_PORT : "5672"
+      RABBIT_USER : "guest"
+      RABBIT_PASSWORD : "guest"
+    restart:
+      on-failure
+    networks:
+      - mml_network
+
+  frontend:
+    image: mmlw:frontend    
+    ports:
+      - 8501:8501
+    depends_on:
+      backend:
+        condition: service_started
+    environment:
+      HUB_URL : "http://backend:8010"
+    restart:
+      on-failure
+    networks:
+      - mml_network    
+
+
+networks:
+  mml_network:
+    driver: bridge
+    name: mml_network
+

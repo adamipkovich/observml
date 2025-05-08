@@ -1,0 +1,15 @@
+load_object : ## this is a must - should not remove - unique dynamic import of class (dynamic package download is not yet supported)
+  module: framework.FaultDetection  
+  name: FaultDetectionExperiment
+eda:
+setup: # from this key, it is arbitrary -> the key name is a function in the experiment, and the value is the parameter of the function.
+    # MUST NOT HAVE A data KEYWORD!
+    datetime_column :
+create_model :
+    model : "iforest" #"ee" #"dbscan" #"pca" # If model is none, then compare model is used.
+    params:
+      n_estimators : 100
+      contamination : "auto"
+      random_state : 0
+
+

@@ -1,0 +1,7 @@
+load_object :
+  module: framework.ProcessMining
+  name: ProcessMiningExperiment
+setup:
+create_model :
+    model : "cmspam" # lstm
+    params : 

@@ -1,0 +1,7 @@
+load_object :
+  module: framework.ProcessMining
+  name: ProcessMiningExperiment
+setup:
+create_model :
+    model : "apriori" # lstm
+    params : 

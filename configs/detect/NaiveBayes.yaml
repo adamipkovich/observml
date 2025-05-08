@@ -1,0 +1,14 @@
+##Add pycaret function params here
+load_object :
+  module: framework.FaultIsolation
+  name: FaultIsolationExperiment
+
+
+setup:
+    datetime_column : ds
+    datetime_format : "ms" 
+    target : "Output (S)"
+eda:
+create_model :
+    model : "nb" # Random Forest
+    params:

@@ -1,0 +1,35 @@
+defaults:
+  ## Fault isolation test 
+  - detect :  DecisionTree.yaml #BayesNet.yaml
+  #- hmm : HMM.yaml
+  ## Time series test
+  #- time_series : Prophet.yaml #Prophet.yaml # 
+  #- electric : Prophet.yaml
+  ## Fault detection test
+  - pump :  pca.yaml # DBSCAN.yaml
+  #- ten_detect : iforest.yaml
+  ## Process mining test
+  #- oper : HeuristicsMiner.yaml 
+  #- process_mining : TopKRules.yaml
+  # - iszap_bn : BayesNet.yaml
+  #- iszap_dt : DecisionTree.yaml
+  #- iszap_hmm : HMM.yaml
+  #- iszap_lstm : LSTM.yaml
+  #- iszap_mc : MarkovChain.yaml
+  #- iszap_nb : NaiveBayes.yaml
+  #- iszap_pca : pca.yaml
+  #- iszap_pr : Prophet.yaml
+  # - iszap_rf : RandomForest.yaml
+  # - iszap_arima: ARIMA.yaml
+  # - iszap_dbscan: DBSCAN.yaml
+  #- iszap_elliptic: Elliptic.yaml
+  # - iszap_exp: Exponential.yaml
+  #- iszap_isofor: IsolationForest.yaml
+  #- iszap_autoenc: AutoEncoder.yaml
+  #- iszap_ssa: SSA.yaml
+  #  - iszap_apriori: Apriori.yaml
+  #  - iszap_topk: TopKRules.yaml
+  #  - iszap_cmspam: CMSPAM.yaml
+  #  - iszap_heuristics: HeuristicsMiner.yaml
+  # - ten_detect : iforest.yaml
+  #- nador : nador_test.yaml

@@ -1,0 +1,22 @@
+##Add pycaret function params here
+load_object :
+  module: framework.TimeSeriesAnalysis
+  name:  TimeSeriesAnomalyExperiment
+setup: 
+    datetime_column : "ds"
+    datetime_format : "ms" ##
+    target : "y"
+    predict_window : 1000 ## how many elements you want to show on the figure
+    # retrain :
+    #   retrain_window : 5000 ## if none, retrain on all data.
+    #   metric : "MAPE" ## depending on experiment -> "MSE", "MAE", "R2", "MAPE"
+    #   metric_threshold : 0.3 ## if we get this, retrain
+    #   higher_better : False ## less or more if this threshold is bad performance?
+eda:
+create_model :
+    model : "prophet" # Random Forest
+    params:
+      periods : 0
+      factor : 1.0
+      forecast_window : 100
+      # TODO: Add hyperparameters : 

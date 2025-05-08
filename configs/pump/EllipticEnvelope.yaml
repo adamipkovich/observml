@@ -1,0 +1,16 @@
+## This is the configuration file FaultDetectionExperiment, specifying a PCA instance.
+# Pipeline definition for a specific dataset...
+
+load_object : ## this is a must - should not remove - unique dynamic import of class (dynamic package download is not yet supported)
+  module: framework.FaultDetection  
+  name: FaultDetectionExperiment
+setup: # from this key, it is arbitrary -> the key name is a function in the experiment, and the value is the parameter of the function.
+    # MUST NOT HAVE A data KEYWORD!
+    datetime_column : "ds"
+    datetime_format : "ms"
+eda:
+create_model :
+    model : "ee" # EllipticEnvelope
+    params:
+      contamination : 0.1 # between 0 and 0.5
+ 

@@ -1,0 +1,16 @@
+load_object :
+  module: framework.TimeSeriesAnalysis
+  name:  TimeSeriesAnomalyExperiment
+setup: 
+    datetime_column : "ds"
+    datetime_format : "ms" 
+    target : "y"
+eda:
+create_model :
+    model : "es" # Random Forest
+    params:
+      trend : "mul"
+      seasonal : 
+      seasonal_periods : 
+      threshold_for_anomaly : 2.5
+      freq :  

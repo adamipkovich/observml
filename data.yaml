@@ -1,0 +1,30 @@
+pump : ./data/pump_train.xlsx ## 50 sensor for water pump
+hmm : ./data/hmm_train.xlsx ## 3 numeric var + 1 state variables
+oper : ./data/cable_head_mach_27.csv ## sequences
+detect: ./data/detect_train.xlsx # Digital voltage from analogous voltage and current
+time_series: ./data/time_series_train.xlsx # I have no idea what this is
+process_mining: ./data/traces_csoft_oper.csv # Operator traces for cable head machine 27
+ten_detect : ./data/ten_est_detect.xlsx  ## Tenesse eastman for fault detection
+electric: ./data/electric_time_series.xlsx ## 3 numeric var + 1 state variables
+iszap : ./data/torony_train.csv ## iszaprothasztó tornyok
+iszap_bn : ./data/torony_train.csv ## iszaprothasztó tornyok
+iszap_dt : ./data/torony_train.csv ## iszaprothasztó tornyok
+iszap_hmm : ./data/torony_train.csv ## iszaprothasztó tornyok
+iszap_lstm : ./data/torony_train.csv ## iszaprothasztó tornyok
+iszap_mc : ./data/torony_train.csv ## iszaprothasztó tornyok
+iszap_nb : ./data/torony_train.csv ## iszaprothasztó tornyok
+iszap_pca : ./data/torony_train.csv ## iszaprothasztó tornyok
+iszap_pr : ./data/torony_train.csv ## iszaprothasztó tornyok
+iszap_rf : ./data/torony_train.csv ## iszaprothasztó tornyok
+iszap_arima : ./data/torony_train.csv ## iszaprothasztó tornyok
+iszap_dbscan : ./data/torony_train.csv ## iszaprothasztó tornyok
+iszap_elliptic : ./data/torony_train.csv ## iszaprothasztó tornyok
+iszap_exp : ./data/torony_train.csv ## iszaprothasztó tornyok
+iszap_isofor : ./data/torony_train.csv ## iszaprothasztó tornyok
+iszap_autoenc : ./data/torony_train.csv ## iszaprothasztó tornyok
+iszap_ssa : ./data/torony_train.csv ## iszaprothasztó tornyok
+iszap_apriori : ./data/torony_train.csv ## iszaprothasztó tornyok
+iszap_topk : ./data/torony_train.csv ## iszaprothasztó tornyok
+iszap_cmspam : ./data/torony_train.csv ## iszaprothasztó tornyok
+iszap_heuristics : ./data/torony_train.csv ## iszaprothasztó tornyok
+nador : ./data/mmlw_data_for_rabbit_servo1.json

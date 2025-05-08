@@ -1,0 +1,17 @@
+load_object :
+  module: framework.TimeSeriesAnalysis
+  name:  TimeSeriesAnomalyExperiment
+setup: 
+    datetime_column : "ds"
+    datetime_format : "ms" 
+    target : "y"
+    
+eda:
+create_model :
+    model : "ssa" # Random Forest
+    params:
+      window_size : 10
+      lower_frequency_bound : 0.05
+      lower_frequency_contribution : 0.975
+      threshold : 3
+      

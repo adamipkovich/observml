@@ -1,0 +1,14 @@
+load_object :
+  module: framework.TimeSeriesAnalysis
+  name:  TimeSeriesAnomalyExperiment
+setup: 
+    datetime_column : "DATE"
+    datetime_format : "%d/%m/%Y" 
+    target : "IPG2211A2N"
+#eda:
+#    tsmode : True
+create_model :
+    model : "lstm" # Random Forest
+    params:
+        cell_no : 100
+    

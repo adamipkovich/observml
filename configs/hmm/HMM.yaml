@@ -1,0 +1,14 @@
+load_object :
+  module: framework.FaultIsolation
+  name: FaultIsolationExperiment
+
+setup:
+    datetime_column : 
+    target : state
+eda:
+create_model :
+    model : "hmm" # Random Forest
+    params: ## No params.
+      n_iter : 1000
+      covariance_type : "diag"
+      n_mix: 5

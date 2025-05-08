@@ -1,0 +1,26 @@
+load_object :
+  module: framework.FaultIsolation
+  name: FaultIsolationExperiment
+setup:
+    datetime_column : ${.format.index}
+    datetime_format : "%y-%m-%dT%H:%M:%S"  #2024-08-07T00:00:00
+    target : "xy sensor1"
+    predict_window : ## how much samples to show. if empty, it will show all.
+    #retrain :
+      #retrain_window : 5000 ## if none, retrain on all data.
+      #metric : "Accuracy" ## depending on experiment -> Accuracy, F1, Precision, Recall
+      #metric_threshold : 0.9 ## if we get this, retrain
+      #higher_better : True ## less or more if this threshold is bad performance?
+
+    format :  ## settings for data reading...
+      name : "pivot"
+      id : "tsdata"
+      max_level : 1
+      columns : "target"
+      index : "date"
+      values : "value" 
+
+eda:
+create_model :
+    model : "dt" #"ee" #"dbscan" #"pca" # If model is none, then compare model is used.
+    params:
