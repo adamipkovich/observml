@@ -1,0 +1,57 @@
+# hub_config.yaml
+version: "1.0"
+
+# Global settings
+global:
+  log_level: "info"
+  environment: "development"
+
+# Plugin configurations
+plugins:
+  # MLOps plugin configuration
+  mlops:
+    enabled: true
+    type: "mlflow"  # Which implementation to use
+    config:
+      mlflow_uri: "http://localhost:5000"
+  
+  # Data stream plugin configuration
+  datastream:
+    enabled: true
+    type: "rabbitmq"
+    config:
+      host: "localhost"
+      port: 5672
+      username: "guest"
+      password: "guest"
+  
+  # Task queue plugin configuration
+  taskqueue:
+    enabled: false  # Disabled by default, enable when needed
+    type: "celery"
+    config:
+      broker_url: "amqp://guest:guest@localhost:5672//"
+      backend_url: "redis://localhost:6379/0"
+      app_name: "experiment_hub"
+
+# Available experiment types
+experiments:
+  - name: "time_series"
+    module: "framework.TimeSeriesAnalysis"
+    class: "TimeSeriesExperiment"
+    enabled: true
+  
+  - name: "fault_detection"
+    module: "framework.FaultDetection"
+    class: "FaultDetectionExperiment"
+    enabled: true
+  
+  - name: "fault_isolation"
+    module: "framework.FaultIsolation"
+    class: "FaultIsolationExperiment"
+    enabled: true
+  
+  - name: "process_mining"
+    module: "framework.ProcessMining"
+    class: "ProcessMiningExperiment"
+    enabled: true

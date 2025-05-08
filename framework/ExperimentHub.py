@@ -1,63 +1,195 @@
-import pika.exceptions
 from framework.Experiment import Experiment, load_object
-import mlflow
-from mlflow.tracking import MlflowClient
-import pika
-import yaml
-from yaml import SafeLoader
 import pandas as pd
 import os
 import logging
 from asyncio import sleep
 import time
+import json
+import yaml
+from yaml import SafeLoader
 from copy import deepcopy
-class ExperimentHub:
-    """Class to manage multiple experiments. Abstracts from the user the need to manage multiple experiments. Must have a RabbitMQ and MLflow server running. Otherwise it fails.
-    :attr experiments: Dictionary to store experiments.
-    :attr run_ids: Dictionary to store run IDs.
-    :attr experiment_ids: Dictionary to store experiment IDs.
-    :attr available: Dictionary to store availability of experiments.
-    :attr rabbit_connection: RabbitMQ connection (pika.BlockingConnection).
-    :attr channel: RabbitMQ channel. 
+from typing import Dict, Any, Optional, List, Type, Tuple
 
-    ::todo::
-        - add Postgres support for data storage - new data, metrics, params, logs etc.
-        - celery for better concurrency managent
-        - add email sending if and event system to notify user of retraining/anomalies etc.
-        - add logging
-        - add retraining functionality
-        - git integration for version control + pulling new models from git so that the image does not need to be rebuilt.
+from framework.plugins.base import Plugin
+from framework.plugins.mlops import MLOpsPlugin
+from framework.plugins.datastream import DataStreamPlugin
+from framework.plugins.taskqueue import TaskQueuePlugin
+
+class ExperimentHub:
+    """Class to manage multiple experiments with plugin support.
+    
+    This class abstracts from the user the need to manage multiple experiments.
+    It uses plugins for MLOps, data streaming, and task queue operations.
+    
+    Attributes:
+        experiments: Dictionary to store experiments.
+        run_ids: Dictionary to store run IDs.
+        experiment_ids: Dictionary to store experiment IDs.
+        available: Dictionary to store availability of experiments.
+        plugins: Dictionary to store plugins.
+        task_ids: Dictionary to store task IDs.
+        available_experiments: Dictionary to store available experiment types.
     """
 
-    experiments : dict[str, Experiment] = dict() ## rabbit queue is name of experiment
-    run_ids : dict[str, str] = dict()
-    experiment_ids : dict[str, str] = dict()
-    available : dict[str, bool] = dict()
-    rabbit_connection = None ## blocking connection 
-    channel = None ## blocking channel
+    experiments: Dict[str, Experiment] = {}
+    run_ids: Dict[str, str] = {}
+    experiment_ids: Dict[str, str] = {}
+    available: Dict[str, bool] = {}
+    plugins: Dict[str, Plugin] = {}
+    task_ids: Dict[str, str] = {}
+    available_experiments: Dict[str, Dict[str, str]] = {}
 
-    def __init__(self, mlflow_uri:str, rabbit_host:str, rabbit_port:str|int, rabbit_user:str, rabbit_password:str) -> None:
-        """Constructor for ExperimentHub class. Initializes RabbitMQ connection and MLflow tracking URI. 
-        :param mlflow_uri: URI for MLflow tracking server. --> will most possbibly be http://localhost:5000, or defined by docker networking. 
-        :param rabbit_host: Hostname for RabbitMQ server. --> will most possbibly be localhost, or defined by docker networking.
-        :param rabbit_port: Port for RabbitMQ server. --> will most possbibly be 5672, or defined by docker port mapping.
-        :param rabbit_user: Username for RabbitMQ server.
-        :param rabbit_password: Password for RabbitMQ server.
-        :return: None"""
-        self.mlflow_uri = mlflow_uri
-        self.rabbit_host = rabbit_host
-        self.rabbit_port = rabbit_port
-        self._mlflow_tracking_uri()
-        self._connect_to_rabbit(rabbit_host, rabbit_port, rabbit_user, rabbit_password)
+    def __init__(self, **kwargs) -> None:
+        """Initialize the ExperimentHub with plugins.
         
-    
-    def load(self, name:str, run_id:str = None) -> None:
-        """Function to load saved experiment. 
-        :param name: Name of the experiment.
-        :param run_id: Run ID of the experiment.
-        :return: None
+        Args:
+            **kwargs: Keyword arguments for plugin initialization.
+                mlflow_uri: URI for MLflow tracking server.
+                rabbit_host: Hostname for RabbitMQ server.
+                rabbit_port: Port for RabbitMQ server.
+                rabbit_user: Username for RabbitMQ server.
+                rabbit_password: Password for RabbitMQ server.
+                celery_broker_url: Broker URL for Celery.
+                celery_backend_url: Backend URL for Celery.
+                mlops_plugin: MLOps plugin instance.
+                datastream_plugin: DataStream plugin instance.
+                taskqueue_plugin: TaskQueue plugin instance.
         """
-
+        # Initialize plugins
+        self._init_plugins(**kwargs)
+    
+    @classmethod
+    def from_config(cls, config_path: str = "hub_config.yaml") -> "ExperimentHub":
+        """Create an ExperimentHub instance from a configuration file
+        
+        Args:
+            config_path: Path to the configuration file
+            
+        Returns:
+            ExperimentHub instance
+        """
+        # Load configuration
+        with open(config_path, "r") as f:
+            config = yaml.safe_load(f)
+        
+        # Create ExperimentHub instance
+        hub = cls()
+        
+        # Initialize plugins from configuration
+        hub._init_plugins_from_config(config["plugins"])
+        
+        # Register available experiment types
+        hub._register_experiments(config["experiments"])
+        
+        return hub
+    
+    def _init_plugins_from_config(self, plugin_config: dict) -> None:
+        """Initialize plugins from configuration
+        
+        Args:
+            plugin_config: Plugin configuration dictionary
+        """
+        # Initialize MLOps plugin
+        if plugin_config.get("mlops", {}).get("enabled", False):
+            mlops_config = plugin_config["mlops"]
+            if mlops_config["type"] == "mlflow":
+                from framework.plugins.mlflow_plugin import MLflowPlugin
+                mlops_plugin = MLflowPlugin(**mlops_config["config"])
+                self.register_plugin(mlops_plugin)
+        
+        # Initialize DataStream plugin
+        if plugin_config.get("datastream", {}).get("enabled", False):
+            datastream_config = plugin_config["datastream"]
+            if datastream_config["type"] == "rabbitmq":
+                from framework.plugins.rabbitmq_plugin import RabbitMQPlugin
+                datastream_plugin = RabbitMQPlugin(**datastream_config["config"])
+                self.register_plugin(datastream_plugin)
+        
+        # Initialize TaskQueue plugin
+        if plugin_config.get("taskqueue", {}).get("enabled", False):
+            taskqueue_config = plugin_config["taskqueue"]
+            if taskqueue_config["type"] == "celery":
+                from framework.plugins.celery_plugin import CeleryPlugin
+                taskqueue_plugin = CeleryPlugin(**taskqueue_config["config"])
+                self.register_plugin(taskqueue_plugin)
+    
+    def _register_experiments(self, experiment_config: list) -> None:
+        """Register available experiment types
+        
+        Args:
+            experiment_config: List of experiment configurations
+        """
+        self.available_experiments = {}
+        
+        for exp in experiment_config:
+            if exp.get("enabled", True):
+                self.available_experiments[exp["name"]] = {
+                    "module": exp["module"],
+                    "class": exp["class"]
+                }
+    
+    def _init_plugins(self, **kwargs) -> None:
+        """Initialize plugins based on provided configuration."""
+        # MLOps plugin (MLflow)
+        if 'mlops_plugin' in kwargs:
+            self.register_plugin(kwargs['mlops_plugin'])
+        elif 'mlflow_uri' in kwargs:
+            from framework.plugins.mlflow_plugin import MLflowPlugin
+            mlops_plugin = MLflowPlugin(mlflow_uri=kwargs['mlflow_uri'])
+            self.register_plugin(mlops_plugin)
+        
+        # Data stream plugin (RabbitMQ)
+        if 'datastream_plugin' in kwargs:
+            self.register_plugin(kwargs['datastream_plugin'])
+        elif all(k in kwargs for k in ['rabbit_host', 'rabbit_port', 'rabbit_user', 'rabbit_password']):
+            from framework.plugins.rabbitmq_plugin import RabbitMQPlugin
+            datastream_plugin = RabbitMQPlugin(
+                host=kwargs['rabbit_host'],
+                port=kwargs['rabbit_port'],
+                username=kwargs['rabbit_user'],
+                password=kwargs['rabbit_password']
+            )
+            self.register_plugin(datastream_plugin)
+        
+        # Task queue plugin (Celery)
+        if 'taskqueue_plugin' in kwargs:
+            self.register_plugin(kwargs['taskqueue_plugin'])
+        elif all(k in kwargs for k in ['celery_broker_url', 'celery_backend_url']):
+            from framework.plugins.celery_plugin import CeleryPlugin
+            taskqueue_plugin = CeleryPlugin(
+                broker_url=kwargs['celery_broker_url'],
+                backend_url=kwargs['celery_backend_url'],
+                app_name=kwargs.get('celery_app_name', 'experiment_hub')
+            )
+            self.register_plugin(taskqueue_plugin)
+    
+    def register_plugin(self, plugin: Plugin) -> None:
+        """Register a plugin.
+        
+        Args:
+            plugin: The plugin to register.
+        """
+        self.plugins[plugin.plugin_type] = plugin
+        plugin.initialize()
+    
+    def get_plugin(self, plugin_type: str) -> Optional[Plugin]:
+        """Get a plugin by type.
+        
+        Args:
+            plugin_type: The type of plugin to get.
+        
+        Returns:
+            The plugin, or None if not found.
+        """
+        return self.plugins.get(plugin_type)
+    
+    def load(self, name: str, run_id: str = None) -> None:
+        """Load a saved experiment.
+        
+        Args:
+            name: Name of the experiment.
+            run_id: Run ID of the experiment.
+        """
         if name in self.run_ids.keys():
             run_id = self.run_ids[name]
         else:
@@ -67,337 +199,373 @@ class ExperimentHub:
             else:
                 self.run_ids[name] = run_id
         
-
-        if not os.path.exists(os.path.join(os.getcwd(), run_id)):
-            os.makedirs(os.path.join(os.getcwd(), run_id))
-            mlflow.artifacts.download_artifacts(artifact_uri=f"runs:/{run_id}/metadata.yaml", dst_path=os.path.join(os.getcwd(), "runs", run_id) )
+        # Get MLOps plugin
+        mlops_plugin = self.get_plugin("mlops")
         
-        with open(os.path.join(os.getcwd(), "runs", run_id, "metadata.yaml")) as f: 
-            cfg = yaml.load(f, Loader=SafeLoader) 
-
-        interface = cfg["load_object"]["name"]
-        module = cfg["load_object"]["module"]
-
-        interface_class = load_object(module, interface)
-        run = mlflow.get_run(run_id)
-        exp_id = run.info.experiment_id
-        experiment = interface_class(cfg = cfg, run_id = run_id, experiment_id =exp_id )
-        experiment = experiment.load(run_id=run_id)
+        # Load experiment using helper function from tasks.py
+        from framework.tasks import load_experiment
+        experiment = load_experiment(name, run_id, mlops_plugin)
+        
         self.experiments[name] = experiment
         self.available[name] = True
-
-    def save(self, name:str) -> None:
-        """Function to save experiment. Calls experiment.save() method.
-        :param name: Name of the experiment.
-        :return: None"""
-        #TODO: save experiment to disk
-        try:
-            self.experiments[name].save()   
-        except Exception as e:
-            logging.error(e)
-
     
-    def kill(self, name:str, **kwargs): 
-        """Function to kill experiment. Deletes experiment from registry without saving."""
-        ## TODO: add save/update features etc...
-        try:
-            self.experiments.pop(name) 
-        except Exception as e:
-            logging.error(e)
-    
-    async def train(self, name:str, cfg:dict):
-        """Function to run experiment. This is an async function that runs the experiment sequence defined by the config file in a separate thread. 
+    def save(self, name: str) -> None:
+        """Save an experiment.
         
-        :param name: Name of the experiment (key in self.experimets).
-        :param cfg: Configuration dictionary for the experiment.
-        
-        :return: None
-
-        ::todo::
-            - add celery for concurrency
-            - add logging for errors/states
-            - add eda test - do not go through the training process if the data is not clean/or causes errors.
-            
+        Args:
+            name: Name of the experiment.
         """
-
+        try:
+            # Get MLOps plugin
+            mlops_plugin = self.get_plugin("mlops")
+            
+            # Save experiment using helper function from tasks.py
+            from framework.tasks import save_experiment
+            save_experiment(self.experiments[name], self.run_ids[name], mlops_plugin)
+        except Exception as e:
+            logging.error(e)
+    
+    def kill(self, name: str, **kwargs) -> None:
+        """Kill an experiment.
+        
+        Args:
+            name: Name of the experiment.
+        """
+        try:
+            self.experiments.pop(name)
+        except Exception as e:
+            logging.error(e)
+    
+    async def train(self, name: str, cfg: dict):
+        """Train an experiment.
+        
+        Args:
+            name: Name of the experiment.
+            cfg: Configuration for the experiment.
+        
+        Returns:
+            Task ID if using Celery, or True if trained synchronously.
+        """
         self.available[name] = False
         
-        interface = cfg["load_object"]["name"]
-        module = cfg["load_object"]["module"]
-        experiment_class = load_object(module, interface)
-        client = MlflowClient(self.mlflow_uri)
-        try:
-            client.create_experiment(name)
-        except Exception as e:
-            pass    
-        experiment_id = client.get_experiment_by_name(name).experiment_id
-        self._create_queue(name)
-
-        # Feature names unseen at fit time:
-        # - Output_S --
-        # - ds
-        # Feature names seen at fit time, yet now missing:
-        # - y_pred
-
-
-        data = self._pull_from_rabbit(name)
+        # Get data stream plugin
+        datastream_plugin = self.get_plugin("datastream")
+        if not datastream_plugin:
+            logging.error("Data stream plugin not found.")
+            return
         
-        with mlflow.start_run(experiment_id=experiment_id):
-            #experiment_id = mlflow.active_run().info.experiment_id
-            run_id = mlflow.active_run().info.run_id
-            experiment = experiment_class(cfg = cfg, run_id = run_id, experiment_id = experiment_id)
-            if not os.path.exists(os.path.join(os.getcwd(), "runs")):
-                os.makedirs(os.path.join(os.getcwd(), "runs"))
-            if not os.path.exists(os.path.join(os.getcwd(), "runs", run_id)):
-                os.makedirs(os.path.join(os.getcwd(), "runs", run_id))
-            if not os.path.exists(os.path.join(os.getcwd(), "runs", run_id, "reports")):
-                os.makedirs(os.path.join(os.getcwd(), "runs", run_id, "reports"))
-            if not os.path.exists(os.path.join(os.getcwd(), "runs",run_id, "model")):
-                os.makedirs(os.path.join(os.getcwd(), "runs", run_id, "model"))
+        # Create queue
+        datastream_plugin.create_queue(name)
+        
+        # Get data
+        data = datastream_plugin.pull_data(name)
+        
+        # Get MLOps plugin
+        mlops_plugin = self.get_plugin("mlops")
+        
+        # Get task queue plugin
+        taskqueue_plugin = self.get_plugin("taskqueue")
+        if taskqueue_plugin:
+            # Submit training task to Celery
+            task_id = taskqueue_plugin.submit_task(
+                "framework.tasks.train_experiment",
+                name,
+                cfg,
+                data,
+                mlops_plugin,
+                datastream_plugin
+            )
             
-            #yaml.dump(metadata, open(os.path.join(os.getcwd(), "runs", run_id, "metadata.yaml"), "w"))  
-            #mlflow.log_artifact(os.path.join(os.getcwd(), "runs", run_id, "metadata.yaml"), "")
-            experiment.run(data)
-            experiment.save()
-
-        self.experiments[name] = experiment
-        self.run_ids[name] = run_id
-        self.experiment_ids[name] = experiment_id
-        self.available[name] = True
-        return True
+            # Store task ID
+            self.task_ids[name] = task_id
+            
+            # Wait for result
+            result_json = taskqueue_plugin.get_result(task_id)
+            result = json.loads(result_json)
+            
+            # Update experiment info
+            run_id = result["run_id"]
+            experiment_id = result["experiment_id"]
+            
+            # Load the trained experiment
+            self.load(name, run_id)
+            
+            self.run_ids[name] = run_id
+            self.experiment_ids[name] = experiment_id
+            self.available[name] = True
+            
+            return task_id
+        else:
+            # Fall back to synchronous processing using tasks.py
+            from framework.tasks import train_experiment
+            result_json = train_experiment(name, cfg, data, mlops_plugin, datastream_plugin)
+            result = json.loads(result_json)
+            
+            # Update experiment info
+            run_id = result["run_id"]
+            experiment_id = result["experiment_id"]
+            
+            # Load the trained experiment
+            self.load(name, run_id)
+            
+            self.run_ids[name] = run_id
+            self.experiment_ids[name] = experiment_id
+            self.available[name] = True
+            
+            return True
     
-    async def retrain(self, name : str):
+    async def retrain(self, name: str):
+        """Retrain an experiment.
+        
+        Args:
+            name: Name of the experiment.
+        
+        Returns:
+            Task ID if using Celery, or True if retrained synchronously.
+        """
         if self.experiments.get(name, None) is None:
             return
         
         self.available[name] = False
-        cfg = deepcopy(self.experiments[name].cfg)
-        metrics = self.experiments[name].metrics.copy()
-        inputs = self.experiments[name].input_scheme
-        experiment_class = self.experiments[name].__class__
-        data = self.experiments[name].join_data()
-
-        if hasattr(self.experiments[name], "ds"):
-            if "ds" not in data.columns:
-                data.reset_index(drop=False, names = self.experiments[name].ds, inplace= True)
-            inputs.append(self.experiments[name].ds)
-
-        if hasattr(self.experiments[name], "target"):
-            data.rename(columns={"target" : self.experiments[name].target}, inplace=True)
-            inputs.append(self.experiments[name].target)
-
-
-        data = data.loc[:, inputs]
-        client = MlflowClient(self.mlflow_uri)  
-        experiment_id = client.get_experiment_by_name(name).experiment_id
-        self._create_queue(name)
-
-        with mlflow.start_run(experiment_id=experiment_id):
-            #experiment_id = mlflow.active_run().info.experiment_id
-            run_id = mlflow.active_run().info.run_id
-            experiment = experiment_class(cfg = cfg, run_id = run_id, experiment_id = experiment_id)
-            if not os.path.exists(os.path.join(os.getcwd(), "runs")):
-                os.makedirs(os.path.join(os.getcwd(), "runs"))
-            if not os.path.exists(os.path.join(os.getcwd(), "runs", run_id)):
-                os.makedirs(os.path.join(os.getcwd(), "runs", run_id))
-            if not os.path.exists(os.path.join(os.getcwd(), "runs", run_id, "reports")):
-                os.makedirs(os.path.join(os.getcwd(), "runs", run_id, "reports"))
-            if not os.path.exists(os.path.join(os.getcwd(), "runs",run_id, "model")):
-                os.makedirs(os.path.join(os.getcwd(), "runs", run_id, "model"))
-            
-            #yaml.dump(metadata, open(os.path.join(os.getcwd(), "runs", run_id, "metadata.yaml"), "w"))  
-            #mlflow.log_artifact(os.path.join(os.getcwd(), "runs", run_id, "metadata.yaml"), "")
-            experiment.run(data)
-            experiment.save()
-
-        experiment.metrics = metrics
-        self.experiments[name] = experiment
-        self.run_ids[name] = run_id
-        self.experiment_ids[name] = experiment_id
-        self.available[name] = True
-        return True
-
-
-    def plot(self, name:str, plot_name:str):
-        """Function to get figures. From experiment {name} get figure {plot_name}. Used by API.
-        :param name: Name of the experiment.
-        :param plot_name: Name of the plot.
+        run_id = self.run_ids[name]
         
-        :return: go.Figure object
+        # Get MLOps plugin
+        mlops_plugin = self.get_plugin("mlops")
+        
+        # Get task queue plugin
+        taskqueue_plugin = self.get_plugin("taskqueue")
+        if taskqueue_plugin:
+            # Submit retraining task to Celery
+            task_id = taskqueue_plugin.submit_task(
+                "framework.tasks.retrain_experiment",
+                name,
+                run_id,
+                mlops_plugin
+            )
+            
+            # Store task ID
+            self.task_ids[name] = task_id
+            
+            # Wait for result
+            result_json = taskqueue_plugin.get_result(task_id)
+            result = json.loads(result_json)
+            
+            # Update experiment info
+            new_run_id = result["run_id"]
+            experiment_id = result["experiment_id"]
+            
+            # Load the retrained experiment
+            self.load(name, new_run_id)
+            
+            self.run_ids[name] = new_run_id
+            self.experiment_ids[name] = experiment_id
+            self.available[name] = True
+            
+            return task_id
+        else:
+            # Fall back to synchronous processing using tasks.py
+            from framework.tasks import retrain_experiment
+            result_json = retrain_experiment(name, run_id, mlops_plugin)
+            result = json.loads(result_json)
+            
+            # Update experiment info
+            new_run_id = result["run_id"]
+            experiment_id = result["experiment_id"]
+            
+            # Load the retrained experiment
+            self.load(name, new_run_id)
+            
+            self.run_ids[name] = new_run_id
+            self.experiment_ids[name] = experiment_id
+            self.available[name] = True
+            
+            return True
+    
+    def plot(self, name: str, plot_name: str):
+        """Get a plot from an experiment.
+        
+        Args:
+            name: Name of the experiment.
+            plot_name: Name of the plot.
+        
+        Returns:
+            The plot, or an error message if not found.
         """
         if name not in self.experiments.keys() or not self.available[name] or name == 'None' or plot_name == 'None':
-            return "Experiment not found." ## TODO: add empty registry with go.Figure() object
+            return "Experiment not found."
         
-        return self.experiments[name]._report_registry[plot_name] 
-       
+        return self.experiments[name]._report_registry[plot_name]
     
-    def plot_names(self, name:str) -> list[str] | str:
-        """Function to get all figure names. Used by API.
+    def plot_names(self, name: str) -> List[str] | str:
+        """Get plot names from an experiment.
         
-        :param name: Name of the experiment.
-        :return: List of figure names.
+        Args:
+            name: Name of the experiment.
+        
+        Returns:
+            List of plot names, or an error message if not found.
         """
         if self.experiments and name != 'None' and self.experiments[name]:
             return [list(self.experiments[name]._report_registry.keys()), list(self.experiments[name]._eda_registry.keys())]
         else:
             return "No reports available."
-
-    async def predict(self, name:str)-> pd.DataFrame:  
-        """Function to predict experiment. It is an async function that pulls data from RabbitMQ and calls experiment.predict() method.
-        :param name: Name of the experiment.
-        :return: pd.DataFrame Prediction from the experiment."""
-        #experiment = self.experiments[name]
-        #X = self._pull_from_rabbit(name)
-        #return experiment.predict(X)
-        #try:
+    
+    async def predict(self, name: str) -> pd.DataFrame:
+        """Make predictions with an experiment.
+        
+        Args:
+            name: Name of the experiment.
+        
+        Returns:
+            Predictions from the experiment.
+        """
         available = self.available[name]
         while not available:
             await sleep(0.2)
             available = self.available[name]
             logging.info(f"Waiting for {name} to be available.")
-
-        experiment = self.experiments[name]
-        X = self._pull_from_rabbit(name)
-        y = experiment.predict(X)
-
-        if experiment.retrain():
+        
+        # Get data stream plugin
+        datastream_plugin = self.get_plugin("datastream")
+        if not datastream_plugin:
+            logging.error("Data stream plugin not found.")
+            return
+        
+        # Get data
+        data_json = datastream_plugin.pull_data(name)
+        
+        # Get MLOps plugin
+        mlops_plugin = self.get_plugin("mlops")
+        
+        # Get task queue plugin
+        taskqueue_plugin = self.get_plugin("taskqueue")
+        if taskqueue_plugin:
+            # Submit prediction task to Celery
+            task_id = taskqueue_plugin.submit_task(
+                "framework.tasks.predict_experiment",
+                name,
+                self.run_ids[name],
+                data_json,
+                mlops_plugin
+            )
+            
+            # Wait for result
+            result_json = taskqueue_plugin.get_result(task_id)
+            result = json.loads(result_json)
+            
+            # Parse predictions
+            predictions = pd.read_json(result["predictions"])
+            
+            # Check if retraining is needed
+            if result["needs_retrain"]:
                 await self.retrain(name)
-        return y
+            
+            return predictions
+        else:
+            # Fall back to synchronous processing
+            experiment = self.experiments[name]
+            data = pd.read_json(data_json)
+            predictions = experiment.predict(data)
+            
+            # Check if retraining is needed
+            if experiment.retrain():
+                await self.retrain(name)
+            
+            return predictions
+    
+    def get_train_data(self, name: str) -> str:
+        """Get training data from an experiment.
         
-        # except Exception as e:
-        #      logging.error(e)
-        #      return None
+        Args:
+            name: Name of the experiment.
         
-    def get_train_data(self, name:str) -> str:
-        """Function to get training data.
-        :param name: Name of the experiment.
-        :return: str Training data from the experiment in json format."""
-
+        Returns:
+            Training data in JSON format.
+        """
         if name not in self.experiments.keys() or not self.available[name]:
             return "Experiment not found."
         return self.experiments[name].data.reset_index(inplace=False).to_json()
-
-    def _create_queue(self, queue_name:str) -> None:
-        """Function to create a queue in RabbitMQ. 
-        :param queue_name: Name of the queue.
-        :return: None
+    
+    def get_cfg(self, name: str):
+        """Get configuration of an experiment.
         
-        ::todo::
-            - add error handling
-            - log queue
+        Args:
+            name: Name of the experiment.
+        
+        Returns:
+            Configuration of the experiment.
         """
-
-        self.channel.queue_declare(queue=queue_name, durable = True)
-
-    def get_cfg(self, name:str):
-        """Function to get configuration of the experiment. 
-        :param name: Name of the experiment.
-        :return: dict Configuration of the experiment."""
-
         if name not in self.experiments.keys() or not self.available[name]:
-           Warning(f"Experiment {name} not found.")
-           return {} 
+            logging.warning(f"Experiment {name} not found.")
+            return {}
         return self.experiments[name].cfg
     
-
-    def _connect_to_rabbit(self, host:str, port : str|int, username:str, password:str) -> None:
-        """Function to connect to RabbitMQ server.
-        :param host: Hostname of the RabbitMQ server.
-        :type host: str
-        :param port: Port of the RabbitMQ server.
-        :type port: str|int
-        :param username: Username for the RabbitMQ server.
-        :type username: str
-        :param password: Password for the RabbitMQ server.
-        :type password: str
-        :return: None
-        """
-
-        #self.rabbit_username = username ## TODO: SHA256
-        #self.rabbit_password = password
-        if self.rabbit_connection is not None:
-            if self.rabbit_connection.is_closed:
-                self.rabbit_connection = None
-
-        if self.rabbit_connection is None:
-            credentials = pika.PlainCredentials(username=username, password=password)
-            while self.rabbit_connection is None:
-                try:
-                    self.rabbit_connection = pika.BlockingConnection(pika.ConnectionParameters(host = host, port = port, credentials=credentials, heartbeat=0))
-                except pika.exceptions.AMQPConnectionError:
-                    logging.error(f"Connection to RabbitMQ failed at {host}:{port}. Retrying...")
-                    time.sleep(3)
-                
-                    ## retry 5 second
-
-                ## retry 5 second
-            ## TODO: TIDY UP THE RABBIT CODE
-            self.channel = self.rabbit_connection.channel()
-            self.channel.basic_qos(prefetch_count=1)
-
-    
-    def _disconnect_from_rabbit(self) -> None:
-        """Function to disconnect from RabbitMQ server.
-        :return: None
-        """
-        if self.channel is not None:
-            if self.channel.is_open:
-                self.channel.close()
-                self.channel = None
-
-        if self.rabbit_connection is not None:
-            if self.rabbit_connection.is_open:
-                self.rabbit_connection.close()
-                self.rabbit_connection = None
-        return
-    
-    def _pull_from_rabbit(self, queue:str) -> pd.DataFrame:
-        """Function to pull data from RabbitMQ server.
-        :param queue: Name of the queue.
-        :return: pd.DataFrame Data from the queue."""
-       
-        method_frame, header_frame, body = self.channel.basic_get(queue)
-        if method_frame:
-            data = body.decode("utf-8") #pd.read_json(body.decode("utf-8"))
-            self.channel.basic_ack(method_frame.delivery_tag)
-            #cols = data.columns
-            # cc = [i.replace(" ", "_") for i in cols] # NOTE: cols must be renamed in Experiments as well
-            # cc = [i.replace("//", "") for i in cc]
-            # cc = [i.replace("/", "") for i in cc]
-            # cc = [i.replace("\\", "") for i in cc] 
-            # cc = [i.replace("(", "") for i in cc] 
-            # cc = [i.replace(")", "") for i in cc] 
-            # cc = [i.replace(".", "") for i in cc] 
-            #data.set_axis(cc, axis=1, inplace=True)
-            return data        
-        else:
-            return "" #pd.DataFrame([])
+    def flush(self, queue: str) -> None:
+        """Flush a queue.
         
-
-    def _mlflow_tracking_uri(self) -> None:
-        """Function to set MLflow tracking URI. 
-        :return: None
+        Args:
+            queue: Name of the queue.
         """
-        mlflow.set_tracking_uri(self.mlflow_uri)
-        
+        # Get data stream plugin
+        datastream_plugin = self.get_plugin("datastream")
+        if datastream_plugin:
+            datastream_plugin.flush_queue(queue)
     
-    def _flush(self, queue:str) -> None:
-        """Function to flush queue in RabbitMQ server. This function is used when requests are not handled properly, and the queues start to pile up.
-        :param queue: Name of the queue.
-        :return: None
+    def plot_eda(self, name: str, fig_name: str):
+        """Get an EDA figure from an experiment.
         
-        ::todo::
-            - mode to flush by predicting on each message
-            - mode to flush by train + predicts on each message"""
-        self.channel.queue_declare(queue=queue, durable=True)
-        self.channel.queue_purge(queue)
-
-    def plot_eda(self, name:str, fig_name:str):
-        """Function to get EDA figure.
-        :param name: Name of the experiment.
-        :param fig_name: Name of the figure.
-        :return: go.Figure EDA figure."""
+        Args:
+            name: Name of the experiment.
+            fig_name: Name of the figure.
+        
+        Returns:
+            The EDA figure, or an error message if not found.
+        """
         if name not in self.experiments.keys() or not self.available[name] or name == 'None' or fig_name == 'None':
             return "Experiment not found."
         
         return self.experiments[name]._eda_registry[fig_name]
+    
+    def check_plugin_health(self) -> Dict[str, Dict[str, Any]]:
+        """Check the health of all registered plugins
+        
+        Returns:
+            Dictionary with plugin health information
+        """
+        health_info = {}
+        
+        for plugin_type, plugin in self.plugins.items():
+            is_healthy, details = plugin.health_check()
+            health_info[plugin_type] = {
+                "healthy": is_healthy,
+                "details": details
+            }
+        
+        return health_info
+    
+    def create_experiment(self, name: str, experiment_type: str, config: dict) -> str:
+        """Create a new experiment
+        
+        Args:
+            name: Name of the experiment
+            experiment_type: Type of experiment (must be registered)
+            config: Configuration for the experiment
+            
+        Returns:
+            Name of the created experiment
+        """
+        if experiment_type not in self.available_experiments:
+            raise ValueError(f"Unknown experiment type: {experiment_type}")
+        
+        exp_info = self.available_experiments[experiment_type]
+        
+        # Add load_object information to config
+        config["load_object"] = {
+            "module": exp_info["module"],
+            "name": exp_info["class"]
+        }
+        
+        # Train the experiment
+        self.train(name, config)
+        
+        return name

@@ -1,7 +1,7 @@
 import os
 from contextlib import asynccontextmanager
 import json
-from fastapi import FastAPI, Request, BackgroundTasks
+from fastapi import FastAPI, Request, BackgroundTasks, HTTPException
 from fastapi.responses import Response, JSONResponse
 from plotly.io import to_json
 from framework.ExperimentHub import ExperimentHub
@@ -13,26 +13,35 @@ exp_hub : ExperimentHub = None
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     global exp_hub
-    ## NOTE: docker run -e MY_USER=test -e MY_PASS=12345 ... <image-name> ..
-
-    # NOTE: mlflow uri = sys.argv[1]    #os.environ['MLFLOW_URI'] = 
-    #os.environ['RABBIT_HOST'] = "localhost"
-    #os.environ['RABBIT_PORT'] = "5100"
-    #os.environ['RABBIT_USER'] = "guest"
-    #os.environ['RABBIT_PASSWORD'] = "guest"
-    mlflow_uri = os.environ['MLFLOW_URI']  #"http://localhost:5000" 
-    rabbit_host =  os.environ['RABBIT_HOST'] #"localhost"
-    rabbit_port = os.environ['RABBIT_PORT'] #"5100"
-    rabbit_user = os.environ['RABBIT_USER'] # "guest" #
-    rabbit_pass = os.environ['RABBIT_PASSWORD'] #"guest" #
-    ##TODO: add db to connect and restore previous experiments metadata...
-    exp_hub = ExperimentHub(mlflow_uri=mlflow_uri, rabbit_host=rabbit_host, rabbit_port=rabbit_port, rabbit_user=rabbit_user, rabbit_password=rabbit_pass)
-    yield
-
-    exp_hub._disconnect_from_rabbit()
-    ##TODO: save state of experiment hub---
     
-    return ## do nothing
+    # Check if config file exists
+    config_path = os.environ.get('HUB_CONFIG_PATH', 'hub_config.yaml')
+    if os.path.exists(config_path):
+        # Create ExperimentHub from configuration
+        exp_hub = ExperimentHub.from_config(config_path)
+        logging.info(f"ExperimentHub initialized from config file: {config_path}")
+    else:
+        # Fall back to environment variables
+        logging.info(f"Config file {config_path} not found, using environment variables")
+        mlflow_uri = os.environ.get('MLFLOW_URI', "http://localhost:5000")
+        rabbit_host = os.environ.get('RABBIT_HOST', "localhost")
+        rabbit_port = os.environ.get('RABBIT_PORT', "5672")
+        rabbit_user = os.environ.get('RABBIT_USER', "guest")
+        rabbit_pass = os.environ.get('RABBIT_PASSWORD', "guest")
+        
+        exp_hub = ExperimentHub(
+            mlflow_uri=mlflow_uri, 
+            rabbit_host=rabbit_host, 
+            rabbit_port=rabbit_port, 
+            rabbit_user=rabbit_user, 
+            rabbit_password=rabbit_pass
+        )
+    
+    yield
+    
+    # Shutdown plugins
+    for plugin in exp_hub.plugins.values():
+        plugin.shutdown()
 
 app = FastAPI(lifespan=lifespan)
 
@@ -47,7 +56,7 @@ async def read_root():
 def flush_rabbit(queue : str):
     """Remove all data from rabbit MQ queue {queue}."""
     global exp_hub
-    exp_hub._flush(queue)
+    exp_hub.flush(queue)
     return "Rabbit flushed"
 
 @app.post("/{name}/train")
@@ -107,7 +116,7 @@ def plot(name:str, plot_name:str):
         return Response(status_code=204)
 
 @app.get("/{name}/plot_eda/{plot_name}")
-def plot(name:str, plot_name:str):
+def plot_eda(name:str, plot_name:str):
     """Returns the EDA figure {plot_name} of experiment {name}."""
     global exp_hub
     if name != 'None' and plot_name != 'None':
@@ -178,6 +187,38 @@ def retrain(name : str, background_tasks: BackgroundTasks): ## add background ta
     global exp_hub
     background_tasks.add_task(exp_hub.retrain, name)
     return "Retraining started as requested."
+
+@app.get("/health")
+def check_health():
+    """Check the health of all plugins"""
+    global exp_hub
+    return JSONResponse(content=exp_hub.check_plugin_health())
+
+@app.get("/available_experiments")
+def get_available_experiment_types():
+    """Get available experiment types"""
+    global exp_hub
+    return JSONResponse(content=exp_hub.available_experiments)
+
+@app.post("/create_experiment/{name}/{experiment_type}")
+async def create_experiment(name: str, experiment_type: str, request: Request, background_tasks: BackgroundTasks):
+    """Create a new experiment of the specified type"""
+    global exp_hub
+    
+    # Check if experiment type is available
+    if experiment_type not in exp_hub.available_experiments:
+        raise HTTPException(status_code=400, detail=f"Unknown experiment type: {experiment_type}")
+    
+    # Get configuration from request body
+    a = await request.body()
+    config = json.loads(a.decode('utf-8'))
+    
+    # Create experiment
+    try:
+        background_tasks.add_task(exp_hub.create_experiment, name, experiment_type, config)
+        return {"message": f"Creating experiment '{name}' of type '{experiment_type}'"}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
 ### Add request for metric, threshold, change...
 
