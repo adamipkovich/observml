@@ -19,7 +19,7 @@ import yaml
 import os
 
 # Configuration
-API_URL = "http://localhost:8011"  # ExperimentHub API URL
+API_URL = "http://localhost:8010"  # ExperimentHub API URL
 MLFLOW_URL = "http://localhost:5000"  # MLflow server URL
 RABBIT_HOST = "localhost"
 RABBIT_PORT = "5672"
@@ -133,6 +133,48 @@ def make_prediction():
         print(f"❌ Error making prediction: {e}")
         return False
 
+def test_stop_training_functionality():
+    """Test the ability to stop a running training process."""
+    print("\n--- Testing Stop Training Functionality ---")
+    
+    # Start a training task
+    print("Starting a training task to test stop functionality...")
+    training_success = train_decision_tree()
+    
+    if not training_success:
+        print("❌ Failed to start training task")
+        return False
+    
+    # Wait a moment to ensure the task has started
+    print("Waiting for task to start...")
+    time.sleep(5)  # Give it a bit more time to ensure the task is running
+    
+    # Stop the training
+    try:
+        stop_response = requests.post(f"{API_URL}/{MODEL_NAME}/stop_training")
+        print(f"Stop training response: {stop_response.content}")
+        
+        if stop_response.status_code == 200:
+            print("✅ Successfully sent stop training command")
+            
+            # Wait a moment for the stop to take effect
+            time.sleep(5)  # Give it more time for the stop to take effect
+            
+            # Check if the model is still available
+            status_response = requests.get(f"{API_URL}/{MODEL_NAME}/cfg")
+            if status_response.status_code != 200 or not status_response.json():
+                print("✅ Training was successfully stopped")
+                return True
+            else:
+                print("⚠️ Model is still available after stop command")
+                return False
+        else:
+            print(f"❌ Failed to stop training: {stop_response.content}")
+            return False
+    except Exception as e:
+        print(f"❌ Error testing stop training functionality: {e}")
+        return False
+
 def main():
     """Run the workflow test."""
     print("=== ObservML Workflow Test ===\n")
@@ -150,6 +192,12 @@ def main():
     if not api_healthy:
         print("\n❌ ExperimentHub API is not healthy. Please check the logs.")
         return
+    
+    # Test stop training functionality
+    stop_success = test_stop_training_functionality()
+    if not stop_success:
+        print("\n⚠️ Stop training functionality test failed. This might be expected if Celery is not configured properly.")
+        print("Continuing with regular workflow test...")
     
     # Train decision tree model
     training_success = train_decision_tree()

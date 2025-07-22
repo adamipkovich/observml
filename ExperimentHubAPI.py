@@ -39,6 +39,9 @@ async def lifespan(app: FastAPI):
     
     yield
     
+    # TaskQueue plugin removed - no longer supported
+    pass
+    
     # Shutdown plugins
     for plugin in exp_hub.plugins.values():
         plugin.shutdown()
@@ -94,7 +97,6 @@ def save_experiment(name:str):
 async def predict(name:str, background_tasks: BackgroundTasks):
     """Calls "predict" function of experiment {name}."""
     global exp_hub 
-    ##TODO: add celery to ExperimentHub
     ## TODO: add webhook here
 
     if exp_hub.available.get(name, False):
@@ -150,12 +152,40 @@ def get_experiments():
 
 ####
 
+@app.post("/{name}/stop_training")
+def stop_training(name:str):
+    """Stops the training process for an experiment without removing it."""
+    global exp_hub
+    success = exp_hub.stop_training(name)
+    if success:
+        return {"status": "success", "message": f"Training for experiment {name} stopped successfully"}
+    else:
+        return {"status": "error", "message": f"Failed to stop training for experiment {name}"}
+
+@app.post("/{name}/delete")
+def delete_experiment(name:str):
+    """Removes an experiment from memory."""
+    global exp_hub
+    success = exp_hub.delete_experiment(name)
+    if success:
+        return {"status": "success", "message": f"Experiment {name} deleted successfully"}
+    else:
+        return {"status": "error", "message": f"Failed to delete experiment {name}"}
+
 @app.post("/{name}/kill")
 def kill_experiment(name:str):
-    """Stops training of a model. NOT WORKING..."""
+    """Legacy endpoint. Stops training of a model. Use /stop_training instead."""
     global exp_hub
-    exp_hub.kill(name)
-    return "Experiment killed"
+    success = exp_hub.stop_training(name)
+    if success:
+        return {"status": "success", "message": f"Experiment {name} training stopped successfully"}
+    else:
+        return {"status": "error", "message": f"Failed to stop experiment {name} training"}
+
+@app.post("/{name}/kill/{task_id}")
+def kill_specific_task(name:str, task_id:str):
+    """Legacy endpoint - task queue functionality removed."""
+    return {"status": "error", "message": "Task queue functionality has been removed. Use /stop_training instead."}
 
 
 @app.get("/{name}/run_id")

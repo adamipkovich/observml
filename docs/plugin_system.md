@@ -9,7 +9,6 @@ graph TD
     A[ExperimentHub] --> B[Plugin System]
     B --> C[MLOps Plugin]
     B --> D[DataStream Plugin]
-    B --> E[TaskQueue Plugin]
     A --> F[Experiment Management]
     F --> G[Training]
     F --> H[Prediction]
@@ -19,7 +18,6 @@ graph TD
     J --> L[Experiment Configuration]
     C --> M[MLflowPlugin]
     D --> N[RabbitMQPlugin]
-    E --> O[CeleryPlugin]
 ```
 
 The ExperimentHub plugin system consists of three main components:
@@ -30,7 +28,7 @@ The ExperimentHub plugin system consists of three main components:
 
 ## Plugin Types
 
-The ExperimentHub supports three main types of plugins:
+The ExperimentHub supports two main types of plugins:
 
 ### 1. MLOps Plugin
 
@@ -53,15 +51,9 @@ The DataStream plugin handles data streaming and messaging. It provides methods 
 
 Default implementation: `RabbitMQPlugin`
 
-### 3. TaskQueue Plugin
+### 3. TaskQueue Plugin (REMOVED)
 
-The TaskQueue plugin handles asynchronous task processing. It provides methods for:
-
-- Submitting tasks
-- Getting task results
-- Checking task status
-
-Default implementation: `CeleryPlugin`
+**Note**: The TaskQueue plugin functionality has been removed from ObservML. Training and prediction operations are now handled synchronously within the ExperimentHub. This simplifies the architecture and reduces dependencies while maintaining performance for most use cases.
 
 ## Plugin Interfaces
 
@@ -157,29 +149,9 @@ class DataStreamPlugin(Plugin, Protocol):
         ...
 ```
 
-### TaskQueue Plugin Interface
+### TaskQueue Plugin Interface (REMOVED)
 
-```python
-class TaskQueuePlugin(Plugin, Protocol):
-    """Interface for task queue plugins"""
-    plugin_type = "taskqueue"
-    
-    def register_tasks(self, tasks_module: str) -> None:
-        """Register tasks from a module"""
-        ...
-    
-    def submit_task(self, task_name: str, *args, **kwargs) -> str:
-        """Submit a task to the queue"""
-        ...
-    
-    def get_result(self, task_id: str, timeout: Optional[int] = None) -> Any:
-        """Get the result of a task"""
-        ...
-    
-    def get_status(self, task_id: str) -> str:
-        """Get the status of a task"""
-        ...
-```
+**Note**: The TaskQueue plugin interface has been removed from ObservML. This interface is no longer supported as task queue functionality has been replaced with synchronous processing.
 
 ## Plugin Implementations
 
@@ -262,69 +234,9 @@ class RabbitMQPlugin(DataStreamPlugin):
     # ... other methods ...
 ```
 
-### CeleryPlugin
+### CeleryPlugin (REMOVED)
 
-The `CeleryPlugin` is an implementation of the `TaskQueuePlugin` interface that uses Celery for asynchronous task processing.
-
-```python
-class CeleryPlugin(TaskQueuePlugin):
-    """Celery implementation of TaskQueuePlugin"""
-    plugin_type = "taskqueue"
-    
-    def __init__(self, broker_url: str, backend_url: str, **kwargs):
-        self.broker_url = broker_url
-        self.backend_url = backend_url
-        self.app_name = kwargs.get('app_name', 'experiment_hub')
-        self.app = None
-    
-    def initialize(self) -> None:
-        """Initialize the plugin"""
-        self.app = Celery(
-            self.app_name,
-            broker=self.broker_url,
-            backend=self.backend_url
-        )
-        
-        # Configure Celery
-        self.app.conf.update(
-            task_serializer='json',
-            accept_content=['json'],
-            result_serializer='json',
-            timezone='UTC',
-            enable_utc=True,
-        )
-    
-    def health_check(self) -> Tuple[bool, Dict[str, Any]]:
-        """Check if Celery plugin is working correctly"""
-        try:
-            # Try to ping the broker
-            ping_result = self.app.control.ping(timeout=1.0)
-            if not ping_result:
-                return False, {
-                    "status": "error", 
-                    "message": "No workers responded to ping", 
-                    "broker_url": self.broker_url
-                }
-            
-            # Check backend connection
-            self.app.backend.client.ping()
-            
-            return True, {
-                "status": "connected", 
-                "broker_url": self.broker_url, 
-                "backend_url": self.backend_url,
-                "workers": len(ping_result)
-            }
-        except Exception as e:
-            return False, {
-                "status": "error", 
-                "message": str(e), 
-                "broker_url": self.broker_url, 
-                "backend_url": self.backend_url
-            }
-    
-    # ... other methods ...
-```
+**Note**: The `CeleryPlugin` implementation has been removed from ObservML as task queue functionality is no longer supported. The system now processes training and prediction operations synchronously for improved simplicity and reliability.
 
 ## Plugin Registration and Retrieval
 
@@ -408,14 +320,9 @@ plugins:
       username: "guest"
       password: "guest"
   
-  # Task queue plugin configuration
-  taskqueue:
-    enabled: false  # Disabled by default, enable when needed
-    type: "celery"
-    config:
-      broker_url: "amqp://guest:guest@localhost:5672//"
-      backend_url: "redis://localhost:6379/0"
-      app_name: "experiment_hub"
+  # Task queue plugin configuration - REMOVED
+  # The task queue functionality has been removed from ObservML
+  # Training and prediction operations are now handled synchronously
 ```
 
 The ExperimentHub initializes plugins based on this configuration:
@@ -443,13 +350,8 @@ def _init_plugins_from_config(self, plugin_config: dict) -> None:
             datastream_plugin = RabbitMQPlugin(**datastream_config["config"])
             self.register_plugin(datastream_plugin)
     
-    # Initialize TaskQueue plugin
-    if plugin_config.get("taskqueue", {}).get("enabled", False):
-        taskqueue_config = plugin_config["taskqueue"]
-        if taskqueue_config["type"] == "celery":
-            from framework.plugins.celery_plugin import CeleryPlugin
-            taskqueue_plugin = CeleryPlugin(**taskqueue_config["config"])
-            self.register_plugin(taskqueue_plugin)
+    # TaskQueue plugin removed - no longer supported
+    pass
 ```
 
 ## Creating Custom Plugins

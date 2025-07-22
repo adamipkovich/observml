@@ -28,3 +28,14 @@ class MLOpsPlugin(Plugin):
     def get_experiment_by_name(self, name: str) -> Any:
         """Get an experiment by name"""
         ...
+    
+    def kill_run(self, run_id: str) -> bool:
+        """Terminate an active run
+        
+        Args:
+            run_id: ID of the run to terminate
+            
+        Returns:
+            True if successful, False otherwise
+        """
+        ...

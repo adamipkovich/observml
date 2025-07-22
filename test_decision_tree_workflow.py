@@ -20,8 +20,8 @@ print("Data columns:", data.columns.tolist())
 print("\nTraining model...")
 response = api_commands.train(
     cfg=config,
-    url="http://localhost:8011",  # Use the port where API is running
-    model_name="detect_dt",       # Custom name for this model
+    url="http://localhost:8010",  # Use the port where API is running
+    model_name="detect",       # Custom name for this model
     data=data_json,
     rabbit_host="localhost",
     rabbit_port="5672"            # Using default RabbitMQ port

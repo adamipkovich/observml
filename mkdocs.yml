@@ -1,18 +1,25 @@
-site_name: MMLW
+site_name: ObservML
 nav :
   - Home : index.md
   
-  - "Setting up the application": 
-    - "Local Use" : localdev.md
-    - "Deploying to Docker" : serve.md
-    - "Client-side Use and Testing": client.md
+  - "Getting Started": 
+    - "Local Development" : localdev.md
+    - "Docker Deployment" : serve.md
+    - "Client Usage and Testing": client.md
   
-  - Package:
-    - Models: models.md
-    - Experiment: experiments.md
+  - "Core Components":
+    - "API Reference": api.md
+    - "Configuration": configuration.md
+    - "Plugin System": plugin_system.md
+    - "Plugins": plugins.md
+  
+  - "Framework":
+    - "Models": models.md
+    - "Experiments": experiments.md
     - "Test Results" : test_results.md
   
-  #- "Know-how":
+  - "Development":
+    - "Roadmap": roadmap.md
 
 plugins:
   - print-site # pip install mkdocs-pdf-export-plugin + /print_page/ + print browser
@@ -28,4 +35,3 @@ plugins:
 
 
 theme: readthedocs
-

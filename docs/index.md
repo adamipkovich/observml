@@ -1,46 +1,223 @@
-# Welcome to MMLW's Documentation
+# Welcome to ObservML Documentation
 
-This is the documentation for project 2020-1.1.2-PIACI-KFI-2020-00062
+ObservML is a comprehensive machine learning framework designed for process monitoring, anomaly detection, fault isolation, and time series analysis. Built with a plugin-based architecture, it provides easy-to-use microservices with integrated MLOps, tracking, and deployment capabilities.
 
-The project focuses on modular machine learning workflows (MMLW) for anomaly detection as case studies. The package is easily extendable.
-Currently focuses on Docker-based deployment.
+## What is ObservML?
 
-The package is currently under development, and therefore TODO-s and bugs are noted in relevant codes. For further information, please contact the developers (ipkovichadam@gmail.com, kummer.alex@mk.uni-pannon.hu)
+ObservML (Observable Machine Learning) is a modular framework that focuses on industrial process monitoring and anomaly detection. The project evolved from MMLW (Modular Machine Learning Workflows) to provide a more robust, scalable, and production-ready solution for machine learning in industrial environments.
+
+### Key Features
+
+- **ExperimentHub Architecture**: Central management system for multiple experiments
+- **Plugin System**: Extensible architecture with MLOps, DataStream, and custom plugins
+- **Configuration-Driven**: YAML-based configuration for easy setup and deployment
+- **REST API**: FastAPI-based API with automatic documentation
+- **Real-time Processing**: RabbitMQ integration for streaming data and predictions
+- **MLOps Integration**: Built-in MLflow support for experiment tracking and model registry
 
 ## Prerequisites
-1. Computer with at least 16GB RAM (less is required if only docker/linux distribution is installed), 32-64GB free space
-2. [Docker Engine](https://docs.docker.com/engine/install/) -- if using Docker images
-3. [Python 3.11.8](https://www.python.org/downloads/release/python-3119/)
-5. Access to [MMLW_controlsoft](https://github.com/adamipkovich/controlsoft_MMLW.git) GitHub repository for source code.
-6. Access to [MMLW docker repo](https://hub.docker.com/repository/docker/ipkovichadam/mmlw/general) 
-7. [Git](https://git-scm.com/downloads) 
-8. Any IDE (VSC, Pycharm)
-9. git clone https://github.com/adamipkovich/controlsoft_MMLW.git
-10. git checkout mmlw_template_project
-11. cd (set current directory to controlsoft_MMLW)
 
+Before getting started with ObservML, ensure you have the following:
 
-## First Look at MMLW application
+### System Requirements
+1. **Computer**: At least 16GB RAM (32GB+ recommended for production), 32-64GB free disk space
+2. **Operating System**: Linux, macOS, or Windows with WSL2
+3. **Python**: Version 3.11 or higher
+4. **Docker**: Docker Engine and Docker Compose (for containerized deployment)
+5. **Git**: For cloning the repository
 
-MMLW was developed to provide a simple interface for training and deploying models in the same environment. It contains two services that is required for the main service (backend) to work. The first is the RabbitMQ package  [[1]](https://medium.com/cuddle-ai/async-architecture-with-fastapi-celery-and-rabbitmq-c7d029030377) that handles the data transactions between services (here machines and the backend). It is more efficent to use brokers than http requests, and come with a number of advantages [[2]](https://idomagor.medium.com/what-is-a-message-broker-and-why-we-need-them-da0140dae750). The second is Mlflow that implements version control for ML models, and can be used to track specific experiments. *Without these two services, the backend cannot be used.*     
+### Development Tools (Optional)
+- **IDE**: VSCode, PyCharm, or any preferred IDE
+- **Poetry**: For dependency management (recommended)
+- **Make**: For using Makefile commands (optional)
 
-The following figure depicts the communication between microservices and the basic workflow of the backend:
+## Quick Installation
 
-![Basic workflow of MMLW backend service.](./assets/images/backend_workflow.png )
+### 1. Clone the Repository
 
-The two main commands are train and predict. Train creates a new model, while predict uses an exisiting one, and therefore there will be an error should you use predict without training. Additional functionalities include loading from the mlflow repository, which bypasses the need for training models. This way, the same model can be used for several sensors of the same type.
+```bash
+git clone https://github.com/adamipkovich/observml.git
+cd observml
+```
 
-For further information on how to communicate with the MMLW App, refer to section: client-side use.
+### 2. Choose Installation Method
 
+#### Option A: Poetry (Recommended)
+```bash
+# Install Poetry if not already installed
+curl -sSL https://install.python-poetry.org | python3 -
 
+# Install dependencies
+poetry install
 
-# Roadmap for further improvements
+# Activate virtual environment
+poetry shell
+```
 
- 1. Python Package 
- 1.a Click-based Command line Interface for ease of use
- 2. Logging and testing environments
- 3. Webhooks - sending emails through alerts
- 4. Git integration for extending the deployed service through repositories. (pull codes automatically, so that only the enviromnent must be rebuilt.)
- 4.a Automatic installation of required packages. (use of pipreqs )
- 5. Adding celery for faster concurrency
- 6. Multiple selectable figures on frontend (select relevant figures)
+#### Option B: pip
+```bash
+# Create virtual environment
+python -m venv venv
+source venv/bin/activate  # On Windows: venv\Scripts\activate
+
+# Install dependencies
+pip install -r requirements.txt
+```
+
+### 3. Start Infrastructure Services
+
+```bash
+# Start MLflow and RabbitMQ using Docker
+docker-compose up -d mlflow rabbitmq
+```
+
+### 4. Configure ObservML
+
+```bash
+# Copy example configuration
+cp hub_config.yaml hub_config.yaml
+
+# Edit configuration as needed
+nano hub_config.yaml
+```
+
+### 5. Start the API Server
+
+```bash
+python ExperimentHubAPI.py
+```
+
+The API will be available at:
+- **API Server**: http://localhost:8010
+- **API Documentation**: http://localhost:8010/docs
+- **MLflow UI**: http://localhost:5000
+- **RabbitMQ Management**: http://localhost:15672 (guest/guest)
+
+## Architecture Overview
+
+ObservML is built around several core components:
+
+### ExperimentHub
+The central component that manages all experiments, plugins, and configurations. It provides:
+- Experiment lifecycle management (create, train, predict, save, load)
+- Plugin coordination and health monitoring
+- Configuration management
+- API endpoint handling
+
+### Plugin System
+ObservML uses a plugin architecture for extensibility:
+
+- **MLOps Plugin**: Handles experiment tracking and model registry (MLflow)
+- **DataStream Plugin**: Manages real-time data streaming (RabbitMQ)
+- **Custom Plugins**: Extensible system for adding new functionality
+
+### Experiment Types
+Modular experiment implementations for different use cases:
+- **Time Series Analysis**: Forecasting and anomaly detection in time series data
+- **Fault Detection**: Anomaly detection in sensor data
+- **Fault Isolation**: Classification and root cause analysis
+- **Process Mining**: Business process analysis and optimization
+
+## Basic Workflow
+
+ObservML follows a simple workflow for machine learning experiments:
+
+```mermaid
+graph TD
+    A[Configure System] --> B[Create Experiment]
+    B --> C[Send Data via RabbitMQ]
+    C --> D[Train Model]
+    D --> E[Save to MLflow]
+    E --> F[Make Predictions]
+    F --> G[Visualize Results]
+    G --> H[Monitor Performance]
+    H --> I{Retrain Needed?}
+    I -->|Yes| D
+    I -->|No| F
+```
+
+### Step-by-Step Process
+
+1. **Configuration**: Set up plugins and experiment types in `hub_config.yaml`
+2. **Data Preparation**: Send training data through RabbitMQ queues
+3. **Experiment Creation**: Create and configure experiments via API
+4. **Training**: Train models with automatic MLflow tracking
+5. **Prediction**: Make real-time predictions on streaming data
+6. **Monitoring**: Track model performance and trigger retraining when needed
+
+## Communication Architecture
+
+ObservML uses a microservices architecture with message-based communication:
+
+```mermaid
+graph LR
+    A[Data Source] --> B[RabbitMQ]
+    B --> C[ExperimentHub]
+    C --> D[MLflow]
+    C --> E[Model Storage]
+    F[API Client] --> G[FastAPI]
+    G --> C
+    C --> H[Predictions]
+    H --> I[Visualization]
+```
+
+### Key Benefits
+
+- **Decoupled Architecture**: Services can be scaled independently
+- **Asynchronous Processing**: Non-blocking operations for better performance
+- **Fault Tolerance**: Message queues provide reliability and retry mechanisms
+- **Scalability**: Easy to add more workers or services as needed
+
+## Getting Help
+
+### Documentation Structure
+
+This documentation is organized into several sections:
+
+- **[Local Development](localdev.md)**: Setting up a development environment
+- **[Deployment](serve.md)**: Production deployment with Docker
+- **[Client Usage](client.md)**: Using the API and client libraries
+- **[API Reference](api.md)**: Complete API documentation
+- **[Configuration](configuration.md)**: Configuration options and examples
+- **[Plugin System](plugin_system.md)**: Extending ObservML with plugins
+- **[Models](models.md)**: Available models and algorithms
+- **[Experiments](experiments.md)**: Experiment types and configurations
+
+### Support Channels
+
+- **GitHub Issues**: Report bugs and request features
+- **GitHub Discussions**: Ask questions and share ideas
+- **Documentation**: Comprehensive guides and API reference
+- **Examples**: Sample configurations and use cases
+
+### Contributing
+
+ObservML is an open-source project and welcomes contributions:
+
+1. **Fork** the repository
+2. **Create** a feature branch
+3. **Make** your changes
+4. **Add** tests for new functionality
+5. **Submit** a pull request
+
+## Next Steps
+
+Now that you have ObservML installed, you can:
+
+1. **[Set up local development](localdev.md)** for experimentation
+2. **[Deploy to production](serve.md)** using Docker
+3. **[Learn the API](api.md)** for programmatic access
+4. **[Explore examples](client.md)** to understand common use cases
+5. **[Configure experiments](configuration.md)** for your specific needs
+
+## Project History
+
+ObservML evolved from the MMLW (Modular Machine Learning Workflows) project, which was part of research project 2020-1.1.2-PIACI-KFI-2020-00062. The project has been redesigned with:
+
+- Modern plugin architecture
+- Improved scalability and performance
+- Better separation of concerns
+- Enhanced configuration management
+- Production-ready deployment options
+
+The focus remains on providing accessible machine learning tools for industrial process monitoring and anomaly detection, but with a more robust and extensible foundation.

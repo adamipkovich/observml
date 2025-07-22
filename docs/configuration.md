@@ -34,14 +34,9 @@ plugins:
       username: "guest"
       password: "guest"
   
-  # Task queue plugin configuration
-  taskqueue:
-    enabled: false  # Disabled by default, enable when needed
-    type: "celery"
-    config:
-      broker_url: "amqp://guest:guest@localhost:5672//"
-      backend_url: "redis://localhost:6379/0"
-      app_name: "experiment_hub"
+  # Task queue plugin configuration - REMOVED
+  # The task queue functionality has been removed from ObservML
+  # Training and prediction operations are now handled synchronously
 
 # Available experiment types
 experiments:
@@ -233,19 +228,16 @@ plugins:
       port: 5672
       username: "guest"
       password: "guest"
-  
-  taskqueue:
-    enabled: false
-    type: "celery"
-    config:
-      broker_url: "amqp://guest:guest@localhost:5672//"
-      backend_url: "redis://localhost:6379/0"
-      app_name: "experiment_hub"
 
 experiments:
   - name: "time_series"
     module: "framework.TimeSeriesAnalysis"
     class: "TimeSeriesExperiment"
+    enabled: true
+  
+  - name: "fault_detection"
+    module: "framework.FaultDetection"
+    class: "FaultDetectionExperiment"
     enabled: true
 ```
 
@@ -274,14 +266,6 @@ plugins:
       port: 5672
       username: "${RABBIT_USER}"
       password: "${RABBIT_PASSWORD}"
-  
-  taskqueue:
-    enabled: true
-    type: "celery"
-    config:
-      broker_url: "amqp://${RABBIT_USER}:${RABBIT_PASSWORD}@rabbitmq.example.com:5672//"
-      backend_url: "redis://redis.example.com:6379/0"
-      app_name: "experiment_hub"
 
 experiments:
   - name: "time_series"
@@ -292,6 +276,16 @@ experiments:
   - name: "fault_detection"
     module: "framework.FaultDetection"
     class: "FaultDetectionExperiment"
+    enabled: true
+  
+  - name: "fault_isolation"
+    module: "framework.FaultIsolation"
+    class: "FaultIsolationExperiment"
+    enabled: true
+  
+  - name: "process_mining"
+    module: "framework.ProcessMining"
+    class: "ProcessMiningExperiment"
     enabled: true
 ```
 

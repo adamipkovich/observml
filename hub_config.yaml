@@ -25,14 +25,14 @@ plugins:
       username: "guest"
       password: "guest"
   
-  # Task queue plugin configuration
-  taskqueue:
-    enabled: false  # Disabled by default, enable when needed
-    type: "celery"
-    config:
-      broker_url: "amqp://guest:guest@localhost:5672//"
-      backend_url: "redis://localhost:6379/0"
-      app_name: "experiment_hub"
+  # Task queue plugin configuration - REMOVED
+  # taskqueue:
+  #   enabled: false
+  #   type: "celery"
+  #   config:
+  #     broker_url: "amqp://guest:guest@localhost:5672//"
+  #     backend_url: "rpc://"
+  #     app_name: "experiment_hub"
 
 # Available experiment types
 experiments:

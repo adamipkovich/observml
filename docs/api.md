@@ -216,9 +216,55 @@ curl -X POST "http://localhost:8010/my_experiment/save"
 Experiment saved
 ```
 
+#### POST /{name}/stop_training
+
+Stop the training process for an experiment without removing it.
+
+**Path Parameters**:
+
+- `name`: Name of the experiment
+
+**Example**:
+
+```bash
+curl -X POST "http://localhost:8010/my_experiment/stop_training"
+```
+
+**Response**:
+
+```json
+{
+  "status": "success",
+  "message": "Training for experiment my_experiment stopped successfully"
+}
+```
+
+#### POST /{name}/delete
+
+Remove an experiment from memory.
+
+**Path Parameters**:
+
+- `name`: Name of the experiment
+
+**Example**:
+
+```bash
+curl -X POST "http://localhost:8010/my_experiment/delete"
+```
+
+**Response**:
+
+```json
+{
+  "status": "success",
+  "message": "Experiment my_experiment deleted successfully"
+}
+```
+
 #### POST /{name}/kill
 
-Kill an experiment.
+**[DEPRECATED]** Legacy endpoint. Use `/stop_training` instead.
 
 **Path Parameters**:
 
@@ -232,8 +278,11 @@ curl -X POST "http://localhost:8010/my_experiment/kill"
 
 **Response**:
 
-```
-Experiment killed
+```json
+{
+  "status": "success",
+  "message": "Experiment my_experiment training stopped successfully"
+}
 ```
 
 ### Training and Prediction

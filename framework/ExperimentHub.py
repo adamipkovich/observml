@@ -8,12 +8,11 @@ import json
 import yaml
 from yaml import SafeLoader
 from copy import deepcopy
-from typing import Dict, Any, Optional, List, Type, Tuple
+from typing import Dict, Any, Optional, List, Type, Tuple, Union
 
 from framework.plugins.base import Plugin
 from framework.plugins.mlops import MLOpsPlugin
 from framework.plugins.datastream import DataStreamPlugin
-from framework.plugins.taskqueue import TaskQueuePlugin
 
 class ExperimentHub:
     """Class to manage multiple experiments with plugin support.
@@ -105,13 +104,8 @@ class ExperimentHub:
                 datastream_plugin = RabbitMQPlugin(**datastream_config["config"])
                 self.register_plugin(datastream_plugin)
         
-        # Initialize TaskQueue plugin
-        if plugin_config.get("taskqueue", {}).get("enabled", False):
-            taskqueue_config = plugin_config["taskqueue"]
-            if taskqueue_config["type"] == "celery":
-                from framework.plugins.celery_plugin import CeleryPlugin
-                taskqueue_plugin = CeleryPlugin(**taskqueue_config["config"])
-                self.register_plugin(taskqueue_plugin)
+        # TaskQueue plugin removed - no longer supported
+        pass
     
     def _register_experiments(self, experiment_config: list) -> None:
         """Register available experiment types
@@ -151,17 +145,7 @@ class ExperimentHub:
             )
             self.register_plugin(datastream_plugin)
         
-        # Task queue plugin (Celery)
-        if 'taskqueue_plugin' in kwargs:
-            self.register_plugin(kwargs['taskqueue_plugin'])
-        elif all(k in kwargs for k in ['celery_broker_url', 'celery_backend_url']):
-            from framework.plugins.celery_plugin import CeleryPlugin
-            taskqueue_plugin = CeleryPlugin(
-                broker_url=kwargs['celery_broker_url'],
-                backend_url=kwargs['celery_backend_url'],
-                app_name=kwargs.get('celery_app_name', 'experiment_hub')
-            )
-            self.register_plugin(taskqueue_plugin)
+   
     
     def register_plugin(self, plugin: Plugin) -> None:
         """Register a plugin.
@@ -202,9 +186,18 @@ class ExperimentHub:
         # Get MLOps plugin
         mlops_plugin = self.get_plugin("mlops")
         
+        # Extract plugin configuration for serialization
+        mlops_config = None
+        if mlops_plugin:
+            if hasattr(mlops_plugin, 'mlflow_uri'):
+                mlops_config = {
+                    "type": "mlflow",
+                    "config": {"mlflow_uri": mlops_plugin.mlflow_uri}
+                }
+        
         # Load experiment using helper function from tasks.py
         from framework.tasks import load_experiment
-        experiment = load_experiment(name, run_id, mlops_plugin)
+        experiment = load_experiment(name, run_id, mlops_plugin, mlops_config)
         
         self.experiments[name] = experiment
         self.available[name] = True
@@ -219,32 +212,100 @@ class ExperimentHub:
             # Get MLOps plugin
             mlops_plugin = self.get_plugin("mlops")
             
+            # Extract plugin configuration for serialization
+            mlops_config = None
+            if mlops_plugin:
+                if hasattr(mlops_plugin, 'mlflow_uri'):
+                    mlops_config = {
+                        "type": "mlflow",
+                        "config": {"mlflow_uri": mlops_plugin.mlflow_uri}
+                    }
+            
             # Save experiment using helper function from tasks.py
             from framework.tasks import save_experiment
-            save_experiment(self.experiments[name], self.run_ids[name], mlops_plugin)
+            save_experiment(self.experiments[name], self.run_ids[name], mlops_plugin, mlops_config)
         except Exception as e:
             logging.error(e)
     
-    def kill(self, name: str, **kwargs) -> None:
-        """Kill an experiment.
+    def stop_training(self, name: str) -> bool:
+        """Stop the training process for an experiment without removing it.
         
         Args:
             name: Name of the experiment.
+        
+        Returns:
+            True if the training was stopped, False otherwise.
         """
         try:
-            self.experiments.pop(name)
+            # Get MLOps plugin
+            mlops_plugin = self.get_plugin("mlops")
+            
+            # First, try to end any active run
+            if mlops_plugin and hasattr(mlops_plugin, 'end_any_active_run'):
+                mlops_plugin.end_any_active_run()
+            
+            # Stop specific MLflow run if exists
+            run_id = self.run_ids.get(name)
+            if run_id and mlops_plugin:
+                # Use the plugin to kill the run
+                mlops_plugin.kill_run(run_id)
+            
+            # Mark as not available but keep the experiment
+            self.available[name] = False
+            
+            logging.info(f"Successfully stopped training for experiment {name}")
+            return True
         except Exception as e:
-            logging.error(e)
+            logging.error(f"Error stopping training for experiment {name}: {e}")
+            return False
+    
+    def delete_experiment(self, name: str) -> bool:
+        """Remove an experiment from memory.
+        
+        Args:
+            name: Name of the experiment.
+        
+        Returns:
+            True if the experiment was deleted, False otherwise.
+        """
+        try:
+            # First stop any running training
+            self.stop_training(name)
+            
+            # Then remove from memory
+            if name in self.experiments:
+                self.experiments.pop(name)
+            
+            # Remove IDs
+            self.run_ids.pop(name, None)
+            self.experiment_ids.pop(name, None)
+            
+            return True
+        except Exception as e:
+            logging.error(f"Error deleting experiment {name}: {e}")
+            return False
+    
+    def kill(self, name: str, **kwargs) -> bool:
+        """Legacy method for backward compatibility. Use stop_training instead.
+        
+        Args:
+            name: Name of the experiment.
+            
+        Returns:
+            True if the experiment was killed, False otherwise.
+        """
+        logging.warning("The kill method is deprecated. Use stop_training instead.")
+        return self.stop_training(name)
     
     async def train(self, name: str, cfg: dict):
-        """Train an experiment.
+        """Train an experiment synchronously.
         
         Args:
             name: Name of the experiment.
             cfg: Configuration for the experiment.
         
         Returns:
-            Task ID if using Celery, or True if trained synchronously.
+            True if trained successfully.
         """
         self.available[name] = False
         
@@ -252,79 +313,79 @@ class ExperimentHub:
         datastream_plugin = self.get_plugin("datastream")
         if not datastream_plugin:
             logging.error("Data stream plugin not found.")
-            return
+            return False
         
         # Create queue
         datastream_plugin.create_queue(name)
         
         # Get data
-        data = datastream_plugin.pull_data(name)
+        data_json = datastream_plugin.pull_data(name)
         
         # Get MLOps plugin
         mlops_plugin = self.get_plugin("mlops")
         
-        # Get task queue plugin
-        taskqueue_plugin = self.get_plugin("taskqueue")
-        if taskqueue_plugin:
-            # Submit training task to Celery
-            task_id = taskqueue_plugin.submit_task(
-                "framework.tasks.train_experiment",
-                name,
-                cfg,
-                data,
-                mlops_plugin,
-                datastream_plugin
-            )
+        # Synchronous processing using tasks.py
+        from framework.tasks import train_experiment
+        
+        # Parse JSON to Python object to avoid double serialization
+        try:
+            # If it's already a JSON string, we need to parse it first
+            data_parsed = json.loads(data_json)
+            # Then convert it back to a JSON string for the task
+            data = json.dumps(data_parsed)
+        except json.JSONDecodeError:
+            # If it's not valid JSON, use it as is
+            data = data_json
             
-            # Store task ID
-            self.task_ids[name] = task_id
-            
-            # Wait for result
-            result_json = taskqueue_plugin.get_result(task_id)
-            result = json.loads(result_json)
-            
-            # Update experiment info
-            run_id = result["run_id"]
-            experiment_id = result["experiment_id"]
-            
-            # Load the trained experiment
-            self.load(name, run_id)
-            
-            self.run_ids[name] = run_id
-            self.experiment_ids[name] = experiment_id
-            self.available[name] = True
-            
-            return task_id
-        else:
-            # Fall back to synchronous processing using tasks.py
-            from framework.tasks import train_experiment
-            result_json = train_experiment(name, cfg, data, mlops_plugin, datastream_plugin)
-            result = json.loads(result_json)
-            
-            # Update experiment info
-            run_id = result["run_id"]
-            experiment_id = result["experiment_id"]
-            
-            # Load the trained experiment
-            self.load(name, run_id)
-            
-            self.run_ids[name] = run_id
-            self.experiment_ids[name] = experiment_id
-            self.available[name] = True
-            
-            return True
+        # Extract plugin configurations for serialization
+        mlops_config = None
+        if mlops_plugin:
+            if hasattr(mlops_plugin, 'mlflow_uri'):
+                mlops_config = {
+                    "type": "mlflow",
+                    "config": {"mlflow_uri": mlops_plugin.mlflow_uri}
+                }
+        
+        datastream_config = None
+        if datastream_plugin:
+            if hasattr(datastream_plugin, 'host'):
+                datastream_config = {
+                    "type": "rabbitmq",
+                    "config": {
+                        "host": datastream_plugin.host,
+                        "port": datastream_plugin.port,
+                        "username": datastream_plugin.username,
+                        "password": datastream_plugin.password
+                    }
+                }
+        
+        result_json = train_experiment(name, cfg, data, mlops_config, datastream_config)
+        result = json.loads(result_json)
+        
+        # Update experiment info
+        run_id = result["run_id"]
+        experiment_id = result["experiment_id"]
+        
+        # Load the trained experiment
+        self.load(name, run_id)
+        
+        self.run_ids[name] = run_id
+        self.experiment_ids[name] = experiment_id
+        self.available[name] = True
+        
+        return True
     
     async def retrain(self, name: str):
-        """Retrain an experiment.
+        """Retrain an experiment synchronously.
         
         Args:
             name: Name of the experiment.
         
         Returns:
-            Task ID if using Celery, or True if retrained synchronously.
+            True if retrained successfully.
         """
         if self.experiments.get(name, None) is None:
-            return
+            return False
         
         self.available[name] = False
         run_id = self.run_ids[name]
@@ -332,54 +393,32 @@ class ExperimentHub:
         # Get MLOps plugin
         mlops_plugin = self.get_plugin("mlops")
         
-        # Get task queue plugin
-        taskqueue_plugin = self.get_plugin("taskqueue")
-        if taskqueue_plugin:
-            # Submit retraining task to Celery
-            task_id = taskqueue_plugin.submit_task(
-                "framework.tasks.retrain_experiment",
-                name,
-                run_id,
-                mlops_plugin
-            )
-            
-            # Store task ID
-            self.task_ids[name] = task_id
-            
-            # Wait for result
-            result_json = taskqueue_plugin.get_result(task_id)
-            result = json.loads(result_json)
-            
-            # Update experiment info
-            new_run_id = result["run_id"]
-            experiment_id = result["experiment_id"]
-            
-            # Load the retrained experiment
-            self.load(name, new_run_id)
-            
-            self.run_ids[name] = new_run_id
-            self.experiment_ids[name] = experiment_id
-            self.available[name] = True
-            
-            return task_id
-        else:
-            # Fall back to synchronous processing using tasks.py
-            from framework.tasks import retrain_experiment
-            result_json = retrain_experiment(name, run_id, mlops_plugin)
-            result = json.loads(result_json)
-            
-            # Update experiment info
-            new_run_id = result["run_id"]
-            experiment_id = result["experiment_id"]
-            
-            # Load the retrained experiment
-            self.load(name, new_run_id)
-            
-            self.run_ids[name] = new_run_id
-            self.experiment_ids[name] = experiment_id
-            self.available[name] = True
-            
-            return True
+        # Synchronous processing using tasks.py
+        from framework.tasks import retrain_experiment
+        # Extract plugin configuration for serialization
+        mlops_config = None
+        if mlops_plugin:
+            if hasattr(mlops_plugin, 'mlflow_uri'):
+                mlops_config = {
+                    "type": "mlflow",
+                    "config": {"mlflow_uri": mlops_plugin.mlflow_uri}
+                }
+        
+        result_json = retrain_experiment(name, run_id, mlops_config)
+        result = json.loads(result_json)
+        
+        # Update experiment info
+        new_run_id = result["run_id"]
+        experiment_id = result["experiment_id"]
+        
+        # Load the retrained experiment
+        self.load(name, new_run_id)
+        
+        self.run_ids[name] = new_run_id
+        self.experiment_ids[name] = experiment_id
+        self.available[name] = True
+        
+        return True
     
     def plot(self, name: str, plot_name: str):
         """Get a plot from an experiment.
@@ -396,7 +435,7 @@ class ExperimentHub:
         
         return self.experiments[name]._report_registry[plot_name]
     
-    def plot_names(self, name: str) -> List[str] | str:
+    def plot_names(self, name: str) -> Union[List[str], str]:
         """Get plot names from an experiment.
         
         Args:
@@ -411,7 +450,7 @@ class ExperimentHub:
             return "No reports available."
     
     async def predict(self, name: str) -> pd.DataFrame:
-        """Make predictions with an experiment.
+        """Make predictions with an experiment synchronously.
         
         Args:
             name: Name of the experiment.
@@ -434,44 +473,26 @@ class ExperimentHub:
         # Get data
         data_json = datastream_plugin.pull_data(name)
         
-        # Get MLOps plugin
-        mlops_plugin = self.get_plugin("mlops")
+        # Synchronous processing
+        experiment = self.experiments[name]
         
-        # Get task queue plugin
-        taskqueue_plugin = self.get_plugin("taskqueue")
-        if taskqueue_plugin:
-            # Submit prediction task to Celery
-            task_id = taskqueue_plugin.submit_task(
-                "framework.tasks.predict_experiment",
-                name,
-                self.run_ids[name],
-                data_json,
-                mlops_plugin
-            )
-            
-            # Wait for result
-            result_json = taskqueue_plugin.get_result(task_id)
-            result = json.loads(result_json)
-            
-            # Parse predictions
-            predictions = pd.read_json(result["predictions"])
-            
-            # Check if retraining is needed
-            if result["needs_retrain"]:
-                await self.retrain(name)
-            
-            return predictions
-        else:
-            # Fall back to synchronous processing
-            experiment = self.experiments[name]
+        # Parse JSON to Python object
+        try:
+            # If it's already a JSON string, we need to parse it first
+            data_parsed = json.loads(data_json)
+            # Use pandas to convert the parsed JSON to a DataFrame
+            data = pd.DataFrame(data_parsed)
+        except json.JSONDecodeError:
+            # If it's not valid JSON, use it directly with pandas
             data = pd.read_json(data_json)
-            predictions = experiment.predict(data)
             
-            # Check if retraining is needed
-            if experiment.retrain():
-                await self.retrain(name)
-            
-            return predictions
+        predictions = experiment.predict(data)
+        
+        # Check if retraining is needed
+        if experiment.retrain():
+            await self.retrain(name)
+        
+        return predictions
     
     def get_train_data(self, name: str) -> str:
         """Get training data from an experiment.
