@@ -1,0 +1,1263 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <link rel="shortcut icon" href="../img/favicon.ico" />
+    <title>Client Usage and Testing - ObservML</title>
+    <link rel="stylesheet" href="../css/theme.css" />
+    <link rel="stylesheet" href="../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+        <link href="../assets/_mkdocstrings.css" rel="stylesheet" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "Client Usage and Testing";
+        var mkdocs_page_input_path = "client.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href=".." class="icon icon-home"> ObservML
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="..">Home</a>
+                </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Getting Started</span></p>
+              <ul class="current">
+                  <li class="toctree-l1"><a class="reference internal" href="../localdev/">Local Development</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../serve/">Docker Deployment</a>
+                  </li>
+                  <li class="toctree-l1 current"><a class="reference internal current" href="#">Client Usage and Testing</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#client-side-environment-setup">Client-side environment setup.</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#example-project">Example project</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#training">Training</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#compile_config">compile_config</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#api_commands.compile_config">compile_config</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#api_commands.train">train</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#api_commands.train_models">train_models</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#predict-and-monitoring">Predict and Monitoring</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#api_commandspredict">api_commands.predict</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#api_commands.predict">predict</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#loading-experiment">Loading Experiment</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#api_commands.load_experiment">load_experiment</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#notes">Notes</a>
+    </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Core Components</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../api/">API Reference</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../configuration/">Configuration</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../plugin_system/">Plugin System</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../plugins/">Plugins</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Framework</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../models/">Models</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../experiments/">Experiments</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../test_results/">Test Results</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Development</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../roadmap/">Roadmap</a>
+                  </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="..">ObservML</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href=".." class="icon icon-home" aria-label="Docs"></a></li>
+          <li class="breadcrumb-item">Getting Started</li>
+      <li class="breadcrumb-item active">Client Usage and Testing</li>
+    <li class="wy-breadcrumbs-aside">
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="client-side-use">Client-side Use</h1>
+<p>This section explains how to communicate with a running MMLW application, which includes a short description on how to compile instructions for training sessions, then how predict and loading/saving functions are used.</p>
+<p>Since the developer environment is not required, first a short client-side setup is included.</p>
+<h2 id="client-side-environment-setup">Client-side environment setup.</h2>
+<p>First download Python and an IDE (We recommend VSC or Pycharm).</p>
+<p>Pull from repo https://github.com/adamipkovich/controlsoft_MMLW.git, branch "main".
+This repo is currently private and requires permission for git clone to work. You can also pull it manually. </p>
+<p>Install packages if only the client-side code is used:</p>
+<pre><code>pip install -r mindeps.txt
+</code></pre>
+<h2 id="example-project">Example project</h2>
+<p>In the "main" branch, you can find the files relevant to client-side use:</p>
+<ol>
+<li>
+<p>Hydra template config directory -- <em>configs</em> folder</p>
+<ul>
+<li>folders that represent an Experiment-ID and a rabbit-queue -&gt; these folders include .yaml files that are experiment specifications.</li>
+<li>__init__.py -- a must have or hydra cannot build the configuration file</li>
+<li>config.yaml -- this yaml file contains what experiments should be trained with which configuration (adding here key/value pairs will train an experiment with the name ${key}, with model configuration located in ${value} - which are .yaml files. Removing a key/value pair means that it will not train that experiment again. )</li>
+<li>Template Experiment specifications are provided under the Models section. </li>
+</ul>
+</li>
+<li>
+<p>api_commands.py - precompiled set of commands. A must have.</p>
+</li>
+<li>
+<p>data (e.g. ./data/) - testing data to be posted on rabbit. Each is stored in .xlsx format, but the system can only receive .json formatted data! NOTE: Recent developments contain a formatter for json files.</p>
+</li>
+<li>
+<p>data.yaml - defines local paths to data, if not passed as objects. (used by train_stript_local.py)</p>
+</li>
+<li>
+<p>example files: train_script_local.py, train_script_obj.py, test_script.py
+    Data folder and .yaml is not necessary, data can be passed as an object as well.
+    We provide 2 examples for training, one of which automatically reads in data from the project, defined in the .yaml file. The other reads the .xlsx-s in to pass it as an object in memory (as an example for memory-based handling of data). </p>
+</li>
+<li>
+<p>docker-compose.yaml which will be the heartbeat of the application.</p>
+</li>
+</ol>
+<p>An example for project structure looks as follows:</p>
+<pre><code>    data
+        example.data.xlsx
+    configs
+        rabbit_queue_name_1
+            ml_model_template.yaml
+        rabbit_queue_name_2
+            ml_model_template.yaml
+        __init__.py
+        config.yaml
+    api_commands.py
+    data.yaml
+    docker-compose.yaml
+</code></pre>
+<p>NOTE: In this form, the project is only capable of sending instructions.</p>
+<p>The hydra structure has a main configuration file, which is called config.yaml.
+Here, keywords represent the folder names, and the values the .yaml file that should be used for the key (hydra dynamically builds the configuration files, but one keyword can only have one .yaml injected). Here it would look like:</p>
+<pre><code>defaults:
+    rabbit_queue_name_1 : experiment_template.yaml
+    rabbit_queue_name_2 : experiment_template.yaml
+</code></pre>
+<p>.yaml files will be appended together in config.yaml with keys rabbit_queue_name_1 and rabbit_queue_name_2 as a dict.</p>
+<p>The system will open up channels with names: rabbit_queue_name_1 and rabbit_queue_name_2. </p>
+<p>Let us suppose that we want to train a PCA model on the pump dataset. The main config.yaml file should look as:</p>
+<pre><code>defaults:
+    pump : pca.yaml
+</code></pre>
+<p>where pca.yaml is:</p>
+<pre><code>load_object : ## this is a must - should not remove -
+# unique dynamic import of class (dynamic package download is not yet supported)
+  module: framework.FaultDetection  # framework folder, FaultDetection.py
+  name: FaultDetectionExperiment # import this class
+setup: # this is also a must have. each experiment requires different parameters.
+    # MUST NOT HAVE A &quot;data&quot; KEYWORD!
+    datetime_column : &quot;ds&quot; #-&gt; index, column
+    datetime_format : &quot;ms&quot; # if saved integer, then provide timedelta e.g. milisecond,
+    # if string then the format must be defined such as %y-%m-%d.
+
+eda: # from this key, inclusion is arbitrary
+create_model : 
+#the key name is a function in the experiment, and the value is the parameter of the function.
+    model : &quot;pca&quot; 
+    # here you can change the model for other models that is loaded in FaultDetectionExperiment class
+    # e.g. &quot;ee&quot; #&quot;dbscan&quot; #&quot;pca&quot; # etc
+    params: ## pca does not require tuning. 
+    ## if you want to change the model so that only 
+    #60% of the variance is explained, then:
+        n_components : 0.6
+...
+# can add new functionalities to an experiment by overloading the class' functions. 
+#In the run function, each key, e.g. &quot;function_name&quot; function in the class
+# is called with the parameters defined below the key.
+function_name : # define &quot;function_name&quot; az a class function
+    param1 : 'a' # a parameter of &quot;function_name&quot;
+    param2 : 'b' # another parameter of &quot;function_name&quot;
+</code></pre>
+<p>General rules of writing the configuration files:</p>
+<ul>
+<li>
+<p>eda can be turned of by removing its key (e.g. commenting out the line)</p>
+</li>
+<li>
+<p>if you do not want to change parameters, please do not declare them/include them under the <em>params:</em> keyword. The system is robust, but configuration files may or may not include <em>must-have</em>-s. This will be shown in model specification.</p>
+</li>
+<li>
+<p>Cannot read complex data structures, only basic types + lists/dicts</p>
+</li>
+<li>
+<p>for setup, datetime_column can be left out, and will use default index, except for time series analysis, where it is a <em>must-have</em>.</p>
+</li>
+<li>
+<p>Models section contains relevant parameters. If not, then the model's (in ./models/{experiment}/{model_name}) __init__ function contains modifiable parameters.</p>
+</li>
+<li>
+<p>If naming a target/datetime variable, and it is not existent, the system will throw an error. It is often just a "ill-defined" configuration.</p>
+</li>
+<li>
+<p>For the string datetime formating definitions, <a href="https://www.programiz.com/python-programming/datetime">click here</a>.</p>
+</li>
+<li>
+<p>The system facilitates data formating and auto-retraining function. Additional configuration is required.</p>
+</li>
+</ul>
+<p>For FaultIsolation and TimeSeriesAnalysis, Retraining function is available.</p>
+<pre><code>setup: ## Fault Isolation setup
+    ...
+    predict_window : 1000 ## does not work for PCA, controls how many points there should be in the prediction figure. 
+    retrain :
+      retrain_window : 5000 ## if none, retrain on all data. Otherwise retrain on the last 5000 samples.
+      # If the amount of data is less than 5000, it will train on all data.
+      metric : &quot;Accuracy&quot; ## depending on experiment -&gt; Accuracy, F1, Precision, Recall for Fault Isolation
+      metric_threshold : 0.9 ## threshold that will cause retraining 
+      higher_better : True ## less or more better? -&gt; depends on the measure.
+</code></pre>
+<p>There is also a formating function for incoming non-xlsx sourced .json file. This currently works on one template asked for by a partner:</p>
+<pre><code>setup: ## Fault Isolation setup
+    ...
+    format :  ## settings for data reading...
+        name : &quot;pivot&quot; # mode
+        id : &quot;tsdata&quot; # what variable
+        max_level : 1
+        columns : &quot;target&quot;
+        index : &quot;date&quot;
+        values : &quot;value&quot; 
+</code></pre>
+<p>Which can be used for the following template:</p>
+<pre><code>{
+    &quot;tsdata&quot;: [
+        {
+            &quot;target&quot;: &quot;xy sensor1&quot;,
+            &quot;date&quot;: &quot;2024-08-07T00:00:00&quot;,
+            &quot;value&quot;: 0.12
+        },
+        {
+            &quot;target&quot;: &quot;xy sensor1&quot;,
+            &quot;date&quot;: &quot;2024-08-07T00:00:10&quot;,
+            &quot;value&quot;: 0.11
+        },
+        {
+            &quot;target&quot;: &quot;xy sensor2&quot;,
+            &quot;date&quot;: &quot;2024-08-07T00:00:00&quot;,
+            &quot;value&quot;: 231
+        },
+        {
+            &quot;target&quot;: &quot;xy sensor2&quot;,
+            &quot;date&quot;: &quot;2024-08-07T00:00:10&quot;,
+            &quot;value&quot;: 223
+        }
+    ]
+}
+</code></pre>
+<p>NOTE: For Text mining methods, a query format may be added to generate required files that are often is a very specific format. IT IS NOT YET IMPLEMENTED.</p>
+<h2 id="training">Training</h2>
+<p>Compiling training instructions is straightforward, api_commands.py has a function called <em>compile_config</em>, whose output can be used to request the mmlw:backend to start building specific models.</p>
+<h3 id="compile_config">compile_config</h3>
+<hr />
+
+
+<div class="doc doc-object doc-function">
+
+
+
+<a id="api_commands.compile_config"></a>
+    <div class="doc doc-contents first">
+
+        <p>Compiles the config file into a dictionary from several other .yaml configurations with hydra.</p>
+
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Parameters:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+              <b><code>conf_path</code></b>
+                  (<code><span title="str">str</span></code>)
+              –
+              <div class="doc-md-description">
+                <p>Path to the configuration files.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>conf_name</code></b>
+                  (<code><span title="str">str</span></code>)
+              –
+              <div class="doc-md-description">
+                <p>Name of the configuration file.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Returns:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+<b><code>dict</code></b>              –
+              <div class="doc-md-description">
+                <p>Configuration dictionary</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+            <details class="quote">
+              <summary>Source code in <code>api_commands.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">179</span>
+<span class="normal">180</span>
+<span class="normal">181</span>
+<span class="normal">182</span>
+<span class="normal">183</span>
+<span class="normal">184</span>
+<span class="normal">185</span>
+<span class="normal">186</span>
+<span class="normal">187</span>
+<span class="normal">188</span>
+<span class="normal">189</span>
+<span class="normal">190</span>
+<span class="normal">191</span>
+<span class="normal">192</span>
+<span class="normal">193</span>
+<span class="normal">194</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">compile_config</span><span class="p">(</span><span class="n">conf_path</span><span class="p">,</span> <span class="n">conf_name</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Compiles the config file into a dictionary from several other .yaml configurations with hydra.</span>
+
+<span class="sd">    Parameters:</span>
+<span class="sd">            conf_path (str): Path to the configuration files.</span>
+<span class="sd">            conf_name (str): Name of the configuration file.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">            dict: Configuration dictionary</span>
+
+<span class="sd">            &quot;&quot;&quot;</span>
+
+    <span class="k">with</span> <span class="n">initialize</span><span class="p">(</span><span class="n">config_path</span><span class="o">=</span><span class="n">conf_path</span><span class="p">):</span>
+            <span class="n">cfg</span> <span class="o">=</span> <span class="n">compose</span><span class="p">(</span><span class="n">config_name</span><span class="o">=</span><span class="n">conf_name</span><span class="p">)</span>
+    <span class="n">conf</span> <span class="o">=</span> <span class="n">OmegaConf</span><span class="o">.</span><span class="n">to_container</span><span class="p">(</span><span class="n">cfg</span><span class="p">,</span> <span class="n">resolve</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">conf</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div><hr />
+<p>In the config.yaml one can define any amount of "queue"-s -- These represent not only a rabbit queue for data flow, but an ID for the training models. You can also overwrite model IDs. Models are wrapped in an Experiment object, which handles specific utilities for the models. </p>
+<p>PLEASE NOTE THAT PREDICTION DATA IS NOT SAVED HERE, AND SHOULD BE DIRECTED TO AN OUTSIDE DATABASE. </p>
+<p>Here is a model configuration:</p>
+<pre><code>    load_object : ## this is a must have! This loads the experiment dinamically. 
+    module: framework.FaultIsolation ## Module
+    name: FaultIsolationExperiment #x class name
+    setup: ## this is outside of dynamic loop 
+    #- this must be present. It must assign the data for the experiment in a way it can handle.
+        datetime_column : ds # will set column ds index
+        # NOTE: different experiment handle function parameters differently! 
+        target : &quot;Output (S)&quot; # what to classify - target variable
+    create_model : 
+        model : &quot;dt&quot; #&quot;ee&quot; #&quot;dbscan&quot; #&quot;pca&quot; # 
+        params:
+
+</code></pre>
+<p>Some configuration designate a target variable - and must be given to use (e.g. fault isolation, time series analysis), otherwise the service will refuse to train the model (throws an error).</p>
+<p><em>create_model</em> function's params keyword represent the model's arguments. Therefore, if you have e.g. a pca, variance_explained argument will be given here, provided it has the same name as defined in the model <em><strong>init</strong>()</em>.</p>
+<p>If the template is finished, one should send it to the application. The communication system currently works similarly to the <a href="https://www.c-sharpcorner.com/article/asynchronous-rpc-communication-using-rabbitmq/">Remote Procedure Call (RPC)</a> principle, which means that a request is sent to the backend, which will in turn pull data out of rabbit, and sends back a response. This is how we check on whether the data has been sent and used.</p>
+<p>The example script <em>train_script_obj.py</em> shows how to wrap data json objects to be sent to training. It uses a function named <em>train</em> extensively. Data is loaded in the script with pandas, but it can extended with anything.</p>
+<hr />
+<p>api_commands.train()
+</p>
+
+
+<div class="doc doc-object doc-function">
+
+
+
+<a id="api_commands.train"></a>
+    <div class="doc doc-contents first">
+
+        <p>Sends only one training request to the backend.</p>
+
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Parameters:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+              <b><code>cfg</code></b>
+                  (<code><span title="dict">dict</span></code>)
+              –
+              <div class="doc-md-description">
+                <p>Configuration dictionary.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>url</code></b>
+                  (<code><span title="str">str</span></code>, default:
+                      <code>&#39;http://localhost:8010&#39;</code>
+)
+              –
+              <div class="doc-md-description">
+                <p>URL of the backend.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>model_name</code></b>
+                  (<code><span title="str">str</span></code>, default:
+                      <code>&#39;model&#39;</code>
+)
+              –
+              <div class="doc-md-description">
+                <p>Name of the model.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>data</code></b>
+                  (<code><span title="str">str</span></code>, default:
+                      <code>None</code>
+)
+              –
+              <div class="doc-md-description">
+                <p>Data in JSON format. (must be converted to json, if not json)</p>
+              </div>
+            </li>
+            <li>
+              <b><code>rabbit_host</code></b>
+                  (<code><span title="str">str</span></code>, default:
+                      <code>&#39;localhost&#39;</code>
+)
+              –
+              <div class="doc-md-description">
+                <p>RabbitMQ host.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>rabbit_port</code></b>
+                  (<code><span title="str">str</span></code>, default:
+                      <code>&#39;5100&#39;</code>
+)
+              –
+              <div class="doc-md-description">
+                <p>RabbitMQ port.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>user</code></b>
+                  (<code><span title="str">str</span></code>, default:
+                      <code>&#39;guest&#39;</code>
+)
+              –
+              <div class="doc-md-description">
+                <p>RabbitMQ user.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>password</code></b>
+                  (<code><span title="str">str</span></code>, default:
+                      <code>&#39;guest&#39;</code>
+)
+              –
+              <div class="doc-md-description">
+                <p>RabbitMQ password.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Returns:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+<b><code>response</code></b>              –
+              <div class="doc-md-description">
+                <p>Response from the backend.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+            <details class="quote">
+              <summary>Source code in <code>api_commands.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">20</span>
+<span class="normal">21</span>
+<span class="normal">22</span>
+<span class="normal">23</span>
+<span class="normal">24</span>
+<span class="normal">25</span>
+<span class="normal">26</span>
+<span class="normal">27</span>
+<span class="normal">28</span>
+<span class="normal">29</span>
+<span class="normal">30</span>
+<span class="normal">31</span>
+<span class="normal">32</span>
+<span class="normal">33</span>
+<span class="normal">34</span>
+<span class="normal">35</span>
+<span class="normal">36</span>
+<span class="normal">37</span>
+<span class="normal">38</span>
+<span class="normal">39</span>
+<span class="normal">40</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">train</span><span class="p">(</span><span class="n">cfg</span><span class="p">:</span><span class="nb">dict</span><span class="p">,</span> <span class="n">url</span><span class="o">=</span><span class="s2">&quot;http://localhost:8010&quot;</span><span class="p">,</span> <span class="n">model_name</span> <span class="o">=</span> <span class="s2">&quot;model&quot;</span><span class="p">,</span> <span class="n">data</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">rabbit_host</span> <span class="o">=</span> <span class="s2">&quot;localhost&quot;</span><span class="p">,</span> <span class="n">rabbit_port</span> <span class="o">=</span> <span class="s2">&quot;5100&quot;</span><span class="p">,</span> <span class="n">user</span> <span class="o">=</span> <span class="s2">&quot;guest&quot;</span><span class="p">,</span> <span class="n">password</span> <span class="o">=</span> <span class="s2">&quot;guest&quot;</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Sends only one training request to the backend.</span>
+
+<span class="sd">    Parameters:</span>
+<span class="sd">            cfg (dict): Configuration dictionary.</span>
+<span class="sd">            url (str): URL of the backend.</span>
+<span class="sd">            model_name (str): Name of the model.</span>
+<span class="sd">            data (str): Data in JSON format. (must be converted to json, if not json)</span>
+<span class="sd">            rabbit_host (str): RabbitMQ host.</span>
+<span class="sd">            rabbit_port (str): RabbitMQ port.</span>
+<span class="sd">            user (str): RabbitMQ user.</span>
+<span class="sd">            password (str): RabbitMQ password.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        response: Response from the backend.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">post_data</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">url</span><span class="o">=</span><span class="n">url</span><span class="p">,</span> <span class="n">queue_name</span> <span class="o">=</span> <span class="n">model_name</span><span class="p">,</span> <span class="n">host</span> <span class="o">=</span> <span class="n">rabbit_host</span><span class="p">,</span> <span class="n">port</span> <span class="o">=</span> <span class="n">rabbit_port</span><span class="p">,</span> <span class="n">user</span> <span class="o">=</span> <span class="n">user</span><span class="p">,</span> <span class="n">password</span> <span class="o">=</span> <span class="n">password</span><span class="p">)</span>
+    <span class="n">json_object</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">cfg</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+    <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="n">url</span><span class="o">+</span> <span class="sa">f</span><span class="s2">&quot;/</span><span class="si">{</span><span class="n">model_name</span><span class="si">}</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="s2">&quot;/train&quot;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">json_object</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">response</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div><hr />
+<p>In <em>train_script_local.py</em>, api_commands.train_models is used -- which reads data from the harddrive. The path to the data is defined in data.yaml. </p>
+<hr />
+<p>api_commands.train_models()
+</p>
+
+
+<div class="doc doc-object doc-function">
+
+
+
+<a id="api_commands.train_models"></a>
+    <div class="doc doc-contents first">
+
+        <p>Sends project template and related data to the backend. For each key in the config, it will initiate a training request and post the relevant data to the relevant queue.</p>
+
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Parameters:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+              <b><code>conf_path</code></b>
+                  (<code><span title="str">str</span></code>, default:
+                      <code>&#39;./configs&#39;</code>
+)
+              –
+              <div class="doc-md-description">
+                <p>Path to the configuration files.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>conf_name</code></b>
+                  (<code><span title="str">str</span></code>, default:
+                      <code>&#39;config&#39;</code>
+)
+              –
+              <div class="doc-md-description">
+                <p>Name of the configuration file.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>data_path</code></b>
+                  (<code><span title="str">str</span></code>, default:
+                      <code>&#39;data.yaml&#39;</code>
+)
+              –
+              <div class="doc-md-description">
+                <p>Path to the data file. Requires the same keys as the configuration file.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>url</code></b>
+                  (<code><span title="str">str</span></code>, default:
+                      <code>&#39;http://localhost:8010&#39;</code>
+)
+              –
+              <div class="doc-md-description">
+                <p>URL of the backend.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>rabbit_host</code></b>
+                  (<code><span title="str">str</span></code>, default:
+                      <code>&#39;localhost&#39;</code>
+)
+              –
+              <div class="doc-md-description">
+                <p>RabbitMQ host.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>rabbit_port</code></b>
+                  (<code><span title="str">str</span></code>, default:
+                      <code>&#39;5100&#39;</code>
+)
+              –
+              <div class="doc-md-description">
+                <p>RabbitMQ port.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>user</code></b>
+                  (<code><span title="str">str</span></code>, default:
+                      <code>&#39;guest&#39;</code>
+)
+              –
+              <div class="doc-md-description">
+                <p>RabbitMQ user.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>password</code></b>
+                  (<code><span title="str">str</span></code>, default:
+                      <code>&#39;guest&#39;</code>
+)
+              –
+              <div class="doc-md-description">
+                <p>RabbitMQ password.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Returns:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+<b><code>response</code></b>              –
+              <div class="doc-md-description">
+                <p>Response from the backend.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+            <details class="quote">
+              <summary>Source code in <code>api_commands.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">42</span>
+<span class="normal">43</span>
+<span class="normal">44</span>
+<span class="normal">45</span>
+<span class="normal">46</span>
+<span class="normal">47</span>
+<span class="normal">48</span>
+<span class="normal">49</span>
+<span class="normal">50</span>
+<span class="normal">51</span>
+<span class="normal">52</span>
+<span class="normal">53</span>
+<span class="normal">54</span>
+<span class="normal">55</span>
+<span class="normal">56</span>
+<span class="normal">57</span>
+<span class="normal">58</span>
+<span class="normal">59</span>
+<span class="normal">60</span>
+<span class="normal">61</span>
+<span class="normal">62</span>
+<span class="normal">63</span>
+<span class="normal">64</span>
+<span class="normal">65</span>
+<span class="normal">66</span>
+<span class="normal">67</span>
+<span class="normal">68</span>
+<span class="normal">69</span>
+<span class="normal">70</span>
+<span class="normal">71</span>
+<span class="normal">72</span>
+<span class="normal">73</span>
+<span class="normal">74</span>
+<span class="normal">75</span>
+<span class="normal">76</span>
+<span class="normal">77</span>
+<span class="normal">78</span>
+<span class="normal">79</span>
+<span class="normal">80</span>
+<span class="normal">81</span>
+<span class="normal">82</span>
+<span class="normal">83</span>
+<span class="normal">84</span>
+<span class="normal">85</span>
+<span class="normal">86</span>
+<span class="normal">87</span>
+<span class="normal">88</span>
+<span class="normal">89</span>
+<span class="normal">90</span>
+<span class="normal">91</span>
+<span class="normal">92</span>
+<span class="normal">93</span>
+<span class="normal">94</span>
+<span class="normal">95</span>
+<span class="normal">96</span>
+<span class="normal">97</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">train_models</span><span class="p">(</span><span class="n">conf_path</span><span class="p">:</span><span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;./configs&quot;</span><span class="p">,</span>
+                <span class="n">conf_name</span><span class="p">:</span><span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;config&quot;</span><span class="p">,</span>
+                <span class="n">data_path</span><span class="p">:</span><span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;data.yaml&quot;</span><span class="p">,</span> 
+                <span class="n">url</span><span class="p">:</span><span class="nb">str</span><span class="o">=</span><span class="s2">&quot;http://localhost:8010&quot;</span><span class="p">,</span>
+                <span class="n">rabbit_host</span><span class="p">:</span><span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;localhost&quot;</span><span class="p">,</span>
+                <span class="n">rabbit_port</span><span class="p">:</span><span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;5100&quot;</span><span class="p">,</span> 
+                <span class="n">user</span><span class="p">:</span><span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;guest&quot;</span><span class="p">,</span>
+                <span class="n">password</span><span class="p">:</span><span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;guest&quot;</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Sends project template and related data to the backend. For each key in the config, it will initiate a training request and post the relevant data to the relevant queue.</span>
+
+<span class="sd">    Parameters: </span>
+<span class="sd">            conf_path (str): Path to the configuration files.</span>
+<span class="sd">            conf_name (str): Name of the configuration file.</span>
+<span class="sd">            data_path (str): Path to the data file. Requires the same keys as the configuration file.</span>
+<span class="sd">            url (str): URL of the backend.</span>
+<span class="sd">            rabbit_host (str): RabbitMQ host.</span>
+<span class="sd">            rabbit_port (str): RabbitMQ port.</span>
+<span class="sd">            user (str): RabbitMQ user.</span>
+<span class="sd">            password (str): RabbitMQ password.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        response: Response from the backend.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">cfg</span> <span class="o">=</span> <span class="n">compile_config</span><span class="p">(</span><span class="n">conf_path</span><span class="p">,</span> <span class="n">conf_name</span><span class="p">)</span>  
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">data_path</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="n">data_cfg</span> <span class="o">=</span> <span class="n">yaml</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">Loader</span><span class="o">=</span><span class="n">yaml</span><span class="o">.</span><span class="n">SafeLoader</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">cfg</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+
+        <span class="c1">## read data - xlsx, csv, json, pickle</span>
+        <span class="k">if</span> <span class="n">data_cfg</span><span class="p">[</span><span class="n">k</span><span class="p">]</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.xlsx&quot;</span><span class="p">):</span> <span class="c1">#endswith</span>
+                <span class="n">X</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_excel</span><span class="p">(</span><span class="n">data_cfg</span><span class="p">[</span><span class="n">k</span><span class="p">])</span>
+                <span class="n">X</span> <span class="o">=</span> <span class="n">X</span><span class="o">.</span><span class="n">to_json</span><span class="p">()</span>
+        <span class="k">elif</span> <span class="n">data_cfg</span><span class="p">[</span><span class="n">k</span><span class="p">]</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.csv&quot;</span><span class="p">):</span>
+                <span class="n">X</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">data_cfg</span><span class="p">[</span><span class="n">k</span><span class="p">])</span>
+                <span class="n">X</span> <span class="o">=</span> <span class="n">X</span><span class="o">.</span><span class="n">to_json</span><span class="p">()</span>
+        <span class="k">elif</span> <span class="n">data_cfg</span><span class="p">[</span><span class="n">k</span><span class="p">]</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.txt&quot;</span><span class="p">):</span>
+                <span class="n">X</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">data_cfg</span><span class="p">[</span><span class="n">k</span><span class="p">])</span>
+                <span class="n">X</span> <span class="o">=</span> <span class="n">X</span><span class="o">.</span><span class="n">to_json</span><span class="p">()</span>
+        <span class="k">elif</span> <span class="n">data_cfg</span><span class="p">[</span><span class="n">k</span><span class="p">]</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.json&quot;</span><span class="p">):</span>
+
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">data_cfg</span><span class="p">[</span><span class="n">k</span><span class="p">],</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+                <span class="n">X</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">((</span><span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)))</span>
+
+        <span class="k">elif</span> <span class="n">data_cfg</span><span class="p">[</span><span class="n">k</span><span class="p">]</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.pkl&quot;</span><span class="p">):</span>
+                <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">data_cfg</span><span class="p">[</span><span class="n">k</span><span class="p">],</span> <span class="s2">&quot;rb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+                    <span class="n">X</span> <span class="o">=</span> <span class="n">pickle</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+                    <span class="n">X</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">X</span><span class="p">)</span><span class="o">.</span><span class="n">to_json</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>   
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Data file </span><span class="si">{</span><span class="n">data_path</span><span class="p">[</span><span class="n">k</span><span class="p">]</span><span class="si">}</span><span class="s2"> does not exist, or cannot load. Please ensure the file is in the correct format (xlsx, csv, txt, json, pkl).&quot;</span><span class="p">)</span>
+            <span class="k">return</span>
+        <span class="n">flush_rabbit</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">k</span><span class="p">)</span>
+        <span class="n">rep</span> <span class="o">=</span> <span class="n">train</span><span class="p">(</span><span class="n">cfg</span><span class="p">[</span><span class="n">k</span><span class="p">],</span> <span class="n">url</span><span class="o">=</span><span class="n">url</span><span class="p">,</span> <span class="n">model_name</span> <span class="o">=</span> <span class="n">k</span><span class="p">,</span> <span class="n">data</span> <span class="o">=</span> <span class="n">X</span><span class="p">,</span> <span class="n">rabbit_host</span> <span class="o">=</span> <span class="n">rabbit_host</span><span class="p">,</span> <span class="n">rabbit_port</span> <span class="o">=</span> <span class="n">rabbit_port</span><span class="p">,</span> <span class="n">user</span> <span class="o">=</span> <span class="n">user</span><span class="p">,</span> <span class="n">password</span> <span class="o">=</span> <span class="n">password</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Response: </span><span class="si">{</span><span class="n">rep</span><span class="o">.</span><span class="n">content</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div><hr />
+<p>To try out the example file, type to the terminal (run it in console):</p>
+<pre><code>python train_script_local.py
+</code></pre>
+<p>The frontend asks for the figures every 5 seconds and will automatically refresh the figures, if any models are trained and available, it will drop the error, and start showing the figures. Here, the detect experiment was used with DecisionTree.yaml. </p>
+<p><img alt="Train results" src="../assets/images/train_results.png" /></p>
+<p>However, the predict figures remain empty. If the backend is busy, the frontend will not be able to load.</p>
+<p><img alt="Empty predictions." src="../assets/images/pred_before_pred.png" />
+If multiple models were trained, one can also select which to monitor on the left hand side, under "Experiments"</p>
+<p><img alt="Process monitor." src="../assets/images/process_mining_results.png" /></p>
+<p>One can also inspect the logs in Docker Desktop's log tab:</p>
+<p><img alt="alt text" src="../assets/images/docker_log.png" /></p>
+<h2 id="predict-and-monitoring">Predict and Monitoring</h2>
+<p>Prediction will impact the frontend's prediction figure(s). It currently works similar to the train, except that no configuration is required to use predict. If there is no model with the name the predict asks for, then it will throw an error.</p>
+<p>Let's test the prediction function of the decision tree we trained in the previous section.</p>
+<p>The <em>test_script.py</em> employs the api_commands.predict function:</p>
+<h3 id="api_commandspredict">api_commands.predict</h3>
+<hr />
+
+
+<div class="doc doc-object doc-function">
+
+
+
+<a id="api_commands.predict"></a>
+    <div class="doc doc-contents first">
+
+        <p>Sends a prediction request to the backend. Post data to RabbitMQ.</p>
+
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Parameters:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+              <b><code>url</code></b>
+                  (<code><span title="str">str</span></code>, default:
+                      <code>&#39;http://localhost:8010&#39;</code>
+)
+              –
+              <div class="doc-md-description">
+                <p>URL of the backend.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>data</code></b>
+                  (<code><span title="str">str</span></code>, default:
+                      <code>None</code>
+)
+              –
+              <div class="doc-md-description">
+                <p>Data in JSON format. (must be converted to json, if not json)</p>
+              </div>
+            </li>
+            <li>
+              <b><code>model_name</code></b>
+                  (<code><span title="str">str</span></code>, default:
+                      <code>&#39;model&#39;</code>
+)
+              –
+              <div class="doc-md-description">
+                <p>Name of the model.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>rhost</code></b>
+                  (<code><span title="str">str</span></code>, default:
+                      <code>&#39;localhost&#39;</code>
+)
+              –
+              <div class="doc-md-description">
+                <p>RabbitMQ host.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>rport</code></b>
+                  (<code><span title="str">str</span></code>, default:
+                      <code>5672</code>
+)
+              –
+              <div class="doc-md-description">
+                <p>RabbitMQ port.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>user</code></b>
+                  (<code><span title="str">str</span></code>, default:
+                      <code>&#39;guest&#39;</code>
+)
+              –
+              <div class="doc-md-description">
+                <p>RabbitMQ user.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>password</code></b>
+                  (<code><span title="str">str</span></code>, default:
+                      <code>&#39;guest&#39;</code>
+)
+              –
+              <div class="doc-md-description">
+                <p>RabbitMQ password.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Returns:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+<b><code>response</code></b>              –
+              <div class="doc-md-description">
+                <p>Response from the backend.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+            <details class="quote">
+              <summary>Source code in <code>api_commands.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">150</span>
+<span class="normal">151</span>
+<span class="normal">152</span>
+<span class="normal">153</span>
+<span class="normal">154</span>
+<span class="normal">155</span>
+<span class="normal">156</span>
+<span class="normal">157</span>
+<span class="normal">158</span>
+<span class="normal">159</span>
+<span class="normal">160</span>
+<span class="normal">161</span>
+<span class="normal">162</span>
+<span class="normal">163</span>
+<span class="normal">164</span>
+<span class="normal">165</span>
+<span class="normal">166</span>
+<span class="normal">167</span>
+<span class="normal">168</span>
+<span class="normal">169</span>
+<span class="normal">170</span>
+<span class="normal">171</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">predict</span><span class="p">(</span><span class="n">url</span> <span class="o">=</span> <span class="s2">&quot;http://localhost:8010&quot;</span><span class="p">,</span> <span class="n">data</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">model_name</span> <span class="o">=</span> <span class="s2">&quot;model&quot;</span><span class="p">,</span> <span class="n">rhost</span> <span class="o">=</span> <span class="s2">&quot;localhost&quot;</span><span class="p">,</span> <span class="n">rport</span> <span class="o">=</span> <span class="mi">5672</span><span class="p">,</span> <span class="n">user</span> <span class="o">=</span> <span class="s2">&quot;guest&quot;</span><span class="p">,</span> <span class="n">password</span> <span class="o">=</span> <span class="s2">&quot;guest&quot;</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Sends a prediction request to the backend. Post data to RabbitMQ.</span>
+
+<span class="sd">    Parameters:</span>
+<span class="sd">            url (str): URL of the backend.</span>
+<span class="sd">            data (str): Data in JSON format. (must be converted to json, if not json)</span>
+<span class="sd">            model_name (str): Name of the model.</span>
+<span class="sd">            rhost (str): RabbitMQ host.</span>
+<span class="sd">            rport (str): RabbitMQ port.</span>
+<span class="sd">            user (str): RabbitMQ user.</span>
+<span class="sd">            password (str): RabbitMQ password.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        response: Response from the backend. </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+
+    <span class="k">if</span> <span class="n">data</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">({})</span>
+    <span class="n">post_data</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">url</span><span class="o">=</span><span class="n">url</span><span class="p">,</span> <span class="n">queue_name</span><span class="o">=</span><span class="n">model_name</span><span class="p">,</span> <span class="n">host</span><span class="o">=</span><span class="n">rhost</span><span class="p">,</span> <span class="n">port</span><span class="o">=</span><span class="n">rport</span><span class="p">,</span> <span class="n">user</span><span class="o">=</span><span class="n">user</span><span class="p">,</span> <span class="n">password</span><span class="o">=</span><span class="n">password</span><span class="p">)</span>
+    <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">url</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">model_name</span><span class="si">}</span><span class="s2">/predict&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">response</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div><hr />
+<p>Change mode_name arg for queue and id selection.
+<em>test_script.py</em> contains:</p>
+<pre><code>    from api_commands import predict # get predict
+    import pandas as pd # pandas read in xlsx
+
+    for i in range(8): ## test dataset is separated into 8 different xlsx files.
+        data = pd.read_excel(f&quot;./data/detect_test_{i}.xlsx&quot;) # read
+        data.reset_index(inplace=True, drop=True)
+        data = data.to_json() # to json 
+        predict(url=&quot;http://localhost:8010&quot;, model_name = &quot;detect&quot;, data = data, rhost = &quot;localhost&quot;, rport = &quot;5100&quot;) ##simple way to post predict request.
+        #predict sends data to &quot;detect&quot; queue, and send a train request to the url provided.
+</code></pre>
+<p>Processing the data will update the figures, and so:</p>
+<p><img alt="Mlflow UI." src="../pred_after.png" /></p>
+<p>PLEASE NOTE THAT ONLY JSON FILES CAN BE SENT!</p>
+<h2 id="loading-experiment">Loading Experiment</h2>
+<p>Loading a model is necessary if the same model is to be used with the same sensors. It saves computing power, and time spent with parameterizing.</p>
+<p>api_commands comes with a function called load_experiment. This will only load the state of the model it was saved in, most likely after training.</p>
+<p>api_commands.load_experiment()</p>
+<hr />
+
+
+<div class="doc doc-object doc-function">
+
+
+
+<a id="api_commands.load_experiment"></a>
+    <div class="doc doc-contents first">
+
+        <p>Sends a load request to the backend.</p>
+
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Parameters:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+              <b><code>address</code></b>
+                  (<code><span title="str">str</span></code>, default:
+                      <code>&#39;http://localhost:8010&#39;</code>
+)
+              –
+              <div class="doc-md-description">
+                <p>URL of the backend.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>model_name</code></b>
+                  (<code><span title="str">str</span></code>, default:
+                      <code>&#39;model&#39;</code>
+)
+              –
+              <div class="doc-md-description">
+                <p>Name of the model.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>run_id</code></b>
+                  (<code><span title="str">str</span></code>, default:
+                      <code>None</code>
+)
+              –
+              <div class="doc-md-description">
+                <p>Run ID of the model.  </p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Returns:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+<b><code>response</code></b>              –
+              <div class="doc-md-description">
+                <p>Response from the backend.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+            <details class="quote">
+              <summary>Source code in <code>api_commands.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">100</span>
+<span class="normal">101</span>
+<span class="normal">102</span>
+<span class="normal">103</span>
+<span class="normal">104</span>
+<span class="normal">105</span>
+<span class="normal">106</span>
+<span class="normal">107</span>
+<span class="normal">108</span>
+<span class="normal">109</span>
+<span class="normal">110</span>
+<span class="normal">111</span>
+<span class="normal">112</span>
+<span class="normal">113</span>
+<span class="normal">114</span>
+<span class="normal">115</span>
+<span class="normal">116</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">load_experiment</span><span class="p">(</span><span class="n">address</span> <span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;http://localhost:8010&quot;</span><span class="p">,</span> <span class="n">model_name</span> <span class="o">=</span> <span class="s2">&quot;model&quot;</span><span class="p">,</span> <span class="n">run_id</span><span class="p">:</span><span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Sends a load request to the backend.</span>
+
+<span class="sd">    Parameters:</span>
+<span class="sd">            address (str): URL of the backend.</span>
+<span class="sd">            model_name (str): Name of the model.</span>
+<span class="sd">            run_id (str): Run ID of the model.  </span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        response: Response from the backend.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="n">run_id</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">resp</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">address</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">model_name</span><span class="si">}</span><span class="s2">/load&quot;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">resp</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">address</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">model_name</span><span class="si">}</span><span class="s2">/load/</span><span class="si">{</span><span class="n">run_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">resp</span><span class="o">.</span><span class="n">text</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div><hr />
+<p>To load a model, you have to find the wanted model's run_id, if it has not been initialized (no models with ID). If the model ID was previously used, it will load back that model.
+Run ID can be read from the mlflow ui. e.g. for an LSTM model, you have to find the experiment initialized as the rabbit queue name, select a sympathetic run and copy its ID:
+<img alt="mlflow run id" src="../assets/images/mlflow_run_id.png" /></p>
+<p><em>load_script.py</em> will load a run id if given. For local testing, train a model, restart service, and use the ID of the trained model. The ID can be found in the MLFLOW repository.</p>
+<p><img alt="load_test" src="loaded_obj.png" /></p>
+<p>We gave the keyword "load_try", which did not override my previous model. It is an instance of the trained model saved on mlflow before.
+<img alt="alt text" src="../load_res.png" /></p>
+<p>We also saved the trained/predicted model to the MLFLOW repository.</p>
+<pre><code>python save_script.py
+</code></pre>
+<p>which can be loaded back with load_script.py if the mlflow run id is given!</p>
+<p><img alt="alt text" src="../save_res.png" /></p>
+<h2 id="notes">Notes</h2>
+<ul>
+<li>Cannot yet compare models programatically.</li>
+<li>Retraining autmatically is not yet included</li>
+<li>PCA package has problems with indexing, so shouldn't be fed with data that contains duplicate indices</li>
+<li>Bug with BayesNet - only works locally as the environment could not yet make the necessary C++ compilations -- It works but only locally.</li>
+<li>Some models do not have "proper" predict functions -- process mining is a train only model which repeats train function under prediction function, without saving the results.</li>
+</ul>
+<p>If you notice any bugs, please save the error message, and send it to the developer.</p>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="../serve/" class="btn btn-neutral float-left" title="Docker Deployment"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../api/" class="btn btn-neutral float-right" title="API Reference">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+    
+      <span><a href="../serve/" style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+      <span><a href="../api/" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script src="../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "..";</script>
+    <script src="../js/theme_extra.js"></script>
+    <script src="../js/theme.js"></script>
+      <script src="../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>

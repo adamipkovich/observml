@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <link rel="shortcut icon" href="../img/favicon.ico" />
+    <title>Models - ObservML</title>
+    <link rel="stylesheet" href="../css/theme.css" />
+    <link rel="stylesheet" href="../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+        <link href="../assets/_mkdocstrings.css" rel="stylesheet" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "Models";
+        var mkdocs_page_input_path = "models.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href=".." class="icon icon-home"> ObservML
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="..">Home</a>
+                </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Getting Started</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../localdev/">Local Development</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../serve/">Docker Deployment</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../client/">Client Usage and Testing</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Core Components</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../api/">API Reference</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../configuration/">Configuration</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../plugin_system/">Plugin System</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../plugins/">Plugins</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Framework</span></p>
+              <ul class="current">
+                  <li class="toctree-l1 current"><a class="reference internal current" href="#">Models</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#fault-isolation">Fault Isolation</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#decision-tree">Decision Tree</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#randomforest">RandomForest</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#naivebayes">NaiveBayes</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#hidden-markov-models">Hidden Markov Models</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#bayes-network">Bayes Network</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#markov-chain">Markov Chain</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#fault-isolation-bugs">Fault Isolation Bugs</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#time-series-analysis">Time Series Analysis</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#arima-sarima">ARIMA + SARIMA</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#autoencoder">Autoencoder</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#exponential-smoothing">Exponential Smoothing</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#lstm">LSTM</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#prophet">Prophet</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#ssa">SSA</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#fault-detection">Fault Detection</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#pca">PCA</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#dbscan">DBSCAN</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#elliptic-envelope">Elliptic Envelope</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#isolation-forest">Isolation Forest</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#process-mining">Process Mining</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#heuristicsminer">HeuristicsMiner</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#topkrules">TopKRules</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#apriori-association-rules">Apriori association rules</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#cmspam">CMSPAM</a>
+    </li>
+        </ul>
+    </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../experiments/">Experiments</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../test_results/">Test Results</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Development</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../roadmap/">Roadmap</a>
+                  </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="..">ObservML</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href=".." class="icon icon-home" aria-label="Docs"></a></li>
+          <li class="breadcrumb-item">Framework</li>
+      <li class="breadcrumb-item active">Models</li>
+    <li class="wy-breadcrumbs-aside">
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="models">Models</h1>
+<p>This section contains example .yaml files for models.
+Note: ${} means that it should be replaced with a relevant value</p>
+<h2 id="fault-isolation">Fault Isolation</h2>
+<pre><code>Classification models
+</code></pre>
+<h3 id="decision-tree">Decision Tree</h3>
+<pre><code>load_object :
+  module: framework.FaultIsolation
+  name: FaultIsolationExperiment
+setup:
+    datetime_column : ${ds} #-&gt; datetime changes with dataset
+    target : ${target} # -&gt; target column name changes with dataset
+eda:
+create_model :
+    model : &quot;dt&quot; 
+    params:
+
+</code></pre>
+<h3 id="randomforest">RandomForest</h3>
+<pre><code>load_object :
+  module: framework.FaultIsolation
+  name: FaultIsolationExperiment
+setup:
+    datetime_column : ${ds} #-&gt; datetime changes with dataset
+    target : ${target} # -&gt; target column name changes with dataset
+eda:
+create_model :
+    model : &quot;rf&quot; 
+    params:
+</code></pre>
+<h3 id="naivebayes">NaiveBayes</h3>
+<pre><code>load_object :
+  module: framework.FaultIsolation
+  name: FaultIsolationExperiment
+setup:
+    datetime_column : ${ds} #-&gt; datetime changes with dataset
+    target : ${target} # -&gt; target column name changes with dataset
+eda:
+create_model :
+    model : &quot;nb&quot;
+    params:
+</code></pre>
+<h3 id="hidden-markov-models">Hidden Markov Models</h3>
+<pre><code>load_object :
+  module: framework.FaultIsolation
+  name: FaultIsolationExperiment
+setup:
+    datetime_column : ${ds} #-&gt; datetime changes with dataset
+    target : ${target} # -&gt; target column name changes with dataset
+eda:
+create_model :
+    model : &quot;hmm&quot; 
+    params:
+      n_iter : 1000 # how many iterations
+      covariance_type : &quot;diag&quot;
+      n_mix: 10 #
+</code></pre>
+<h3 id="bayes-network">Bayes Network</h3>
+<pre><code>load_object :
+  module: framework.FaultIsolation
+  name: FaultIsolationExperiment
+setup:
+    datetime_column : ${ds} #-&gt; datetime changes with dataset
+    target : ${target} # -&gt; target column name changes with dataset
+eda:
+create_model :
+    model : &quot;bn&quot; # Random Forest
+    params: 
+      learningMethod : 'MIIC'
+      prior : 'Smoothing'
+      priorWeight : 1
+      discretizationNbBins : 30 #'elbowMethod',
+      discretizationStrategy : &quot;quantile&quot; #&quot;quantile&quot;, &quot;uniform&quot;, &quot;kmeans&quot;, &quot;NML&quot;, &quot;CAIM&quot; and &quot;MDLP&quot;
+      discretizationThreshold : 0.01
+      usePR : False
+</code></pre>
+<p>For furter information on the parameters, please see the <a href="https://pyagrum.readthedocs.io/en/latest/skbnClassifier.html">link</a>
+NOTE: This model's predict cannot be used without target variable. 
+Originally this model would have been used with autoML, but the package continously referenced a null-pointer, and so were omitted.</p>
+<h3 id="markov-chain">Markov Chain</h3>
+<pre><code>load_object :
+  module: framework.FaultIsolation
+  name: FaultIsolationExperiment
+setup:
+    datetime_column : ${ds} #-&gt; datetime changes with dataset
+    target : ${target} # -&gt; target column name changes with dataset
+eda:
+create_model :
+    model : &quot;mc&quot; 
+    params: 
+</code></pre>
+<h3 id="fault-isolation-bugs">Fault Isolation Bugs</h3>
+<ul>
+<li>BayesNet fails if not started locally (cannot find pyAgrum in Docker)</li>
+</ul>
+<h2 id="time-series-analysis">Time Series Analysis</h2>
+<h3 id="arima-sarima">ARIMA + SARIMA</h3>
+<pre><code>load_object :
+  module: framework.TimeSeriesAnalysis
+  name:  TimeSeriesAnomalyExperiment
+setup: 
+    ds : ${ds} #-&gt; datetime changes with dataset
+    target : ${y} # -&gt; time series column name, changes with dataset
+eda:    ## generating EDA, can be removed
+create_model :
+    model : &quot;arima&quot;
+    params:  
+      start_p : 10 #  start value for p
+      d : #differencing order
+      start_q : 10 #start value for q
+      max_p : 100 # max value for p
+      max_q : 100 # max value for p
+      seasonal : False
+      threshold_for_anomaly : 3 #threshold for anomaly detection
+</code></pre>
+<h3 id="autoencoder">Autoencoder</h3>
+<pre><code>load_object :
+  module: framework.TimeSeriesAnalysis
+  name:  TimeSeriesAnomalyExperiment
+setup: 
+    ds : ${ds} #-&gt; datetime changes with dataset
+    target : ${y} # -&gt; time series column name, changes with dataset
+eda:
+create_model :
+    model : &quot;ae&quot;
+    params:
+      layer_no : 6 # number of layers
+      window : 250 # moving window size
+      epoch_no : 10 ## how many times?
+      batch_size : 64 ## 
+      shuffle : False ## Shuffle data
+      threshold_for_anomaly : 3
+      neuron_no_enc : [30, 25, 20, 15, 10,5] # number of cells in encoder part
+      # - must be as much integers as layers
+      neuron_no_dec : [5,10, 15, 20, 25, 30] # number of cells in decoder part
+      # - must be as much integers as layers
+      act_enc : 'relu' # layer type for cells in encoder (Rectified Linear Unit activation)
+      act_dec : 'relu' # layer type for cells in decoder 
+</code></pre>
+<h3 id="exponential-smoothing">Exponential Smoothing</h3>
+<pre><code>load_object :
+  module: framework.TimeSeriesAnalysis
+  name:  TimeSeriesAnomalyExperiment
+setup: 
+    ds : ${ds} #-&gt; datetime changes with dataset
+    target : ${y} # -&gt; time series column name, changes with dataset
+eda:
+create_model :
+    model : &quot;es&quot;
+    params:
+      trend : &quot;mul&quot; # determining the trend -multiplication/addition type
+      seasonal :  # use seasonal analysis
+      seasonal_periods :  # ...
+      threshold_for_anomaly : 2.5 
+      freq :  # day, hour, year, by general notation (&quot;D&quot;, )
+</code></pre>
+<p>Parameters (add to params): </p>
+<ul>
+<li>trend : str (default = None) Type of trend component.</li>
+<li>damped_trend : bool (default = False) Should the trend component be damped.</li>
+<li>seasonal : str (default = None) Type of seasonal component.</li>
+<li>seasonal_periods : int (default = None)
+The number of periods in a complete seasonal cycle, e.g., 4 for quarterly data or 7 for daily data with a weekly cycle.</li>
+<li>freq : str (default = None)
+Frequency of the time series. A Pandas offset or 'B', 'D', 'W', 'M', 'A', or 'Q'.</li>
+<li>threshold_for_anomaly : float (default = 3) Threshold for anomaly detection.</li>
+</ul>
+<h3 id="lstm">LSTM</h3>
+<pre><code>load_object :
+  module: framework.TimeSeriesAnalysis
+  name:  TimeSeriesAnomalyExperiment
+setup: 
+    ds : ${ds} #-&gt; datetime changes with dataset
+    target : ${y} # -&gt; time series column name, changes with dataset
+eda:
+create_model :
+    model : &quot;lstm&quot; # Random Forest
+    params:
+</code></pre>
+<p>Parameters (add to params): </p>
+<ul>
+<li>seq_length : int
+                Length of the sequence.</li>
+<li>target_var : str
+                Name of the target variable.</li>
+<li>layer_no : int (default = 1)
+                Number of LSTM layers.</li>
+<li>cell_no : int (default = 1)
+                Number of cells in LSTM layer.</li>
+<li>epoch_no : int (default = 100)
+                Number of epochs.</li>
+<li>batch_size : int (default = 32)
+                Batch size.</li>
+<li>shuffle : bool (default = True)
+                Shuffle data.</li>
+<li>patience : int (default = 10)
+                Number of epochs with no improvement after which training will be stopped.</li>
+<li>threshold_for_anomaly : float (default = 3)
+                Threshold for anomaly detection.</li>
+</ul>
+<h3 id="prophet">Prophet</h3>
+<pre><code>##Add pycaret function params here
+load_object :
+  module: framework.TimeSeriesAnalysis
+  name:  TimeSeriesAnomalyExperiment
+setup: 
+    ds : ${ds} #-&gt; datetime changes with dataset
+    target : ${y} # -&gt; time series column name, changes with dataset
+eda:
+create_model :
+    model : &quot;prophet&quot;
+    params:
+      periods : 0 # Int number of periods to forecast forward. Has not been tested.
+      factor : 1.0 # anomaly detection factor
+
+</code></pre>
+<h3 id="ssa">SSA</h3>
+<pre><code>load_object :
+  module: framework.TimeSeriesAnalysis
+  name:  TimeSeriesAnomalyExperiment
+setup: 
+    ds : ${ds} #-&gt; datetime changes with dataset
+    target : ${y} # -&gt; time series column name, changes with dataset
+eda:
+create_model :
+    model : &quot;ssa&quot;
+    params:
+      window_size : 10
+      lower_frequency_bound : 0.05
+      lower_frequency_contribution : 0.975
+      threshold : 3
+</code></pre>
+<ul>
+<li>
+<p>window_size : int or float (default = 10)
+    Size of the sliding window (i.e. the size of each word). 
+    If float, it represents the percentage of the size of each time series and must be between 0 and 1.
+     The window size will be computed as max(2, ceil(window_size * n_timestamps)).</p>
+</li>
+<li>
+<p>lower_frequency_bound : float (default = 0.05)
+    The boundary of the periodogram to characterize trend, 
+    seasonal and residual components. It must be between 0 and 0.5. 
+    Ignored if groups is not set to 'auto'.</p>
+</li>
+<li>
+<p>lower_frequency_contribution : float (default = 0.975)
+    The relative threshold to characterize trend,
+     seasonal and residual components by considering the periodogram. 
+     It must be between 0 and 1. Ignored if groups is not set to 'auto'.</p>
+</li>
+<li>
+<p>threshold : float (default = 3)</p>
+</li>
+</ul>
+<h2 id="fault-detection">Fault Detection</h2>
+<p>Clustering</p>
+<h3 id="pca">PCA</h3>
+<pre><code>load_object :
+  module: framework.FaultDetection  
+  name: FaultDetectionExperiment
+setup:
+    # MUST NOT HAVE A data KEYWORD!
+    datetime_column : ${ds}
+create_model :
+    model : &quot;pca&quot; 
+    params:
+</code></pre>
+<p>Parameters (add to params):
+  alpha : float (default = 0.05)   Alpha is the threshold for the hotellings T2 test to determine outliers in the data.
+  detect_outliers : list[str] (default = ['ht2', 'spe']) Type of outlier detections. Types: hotellings T2 and SPE (from center distance)
+  n_components : float  (default = 0.95) Amount of variance the relevant principal components explain 
+  normalize : bool (default = True) Normalize data (currently not relevant)</p>
+<h3 id="dbscan">DBSCAN</h3>
+<pre><code>load_object : 
+  module: framework.FaultDetection  
+  name: FaultDetectionExperiment
+setup:
+    # MUST NOT HAVE A data KEYWORD!
+    datetime_column : ${ds}
+create_model :
+    model : &quot;dbscan&quot;
+    params:
+      eps : 2 # The maximum distance between two samples 
+      #for one to be considered as in the neighborhood of the other.
+      #Will define the strictness of anomaly detection
+      min_samples :  # Automatically defined as twice the variables.
+      # The number of samples (or total weight) in a neighborhood for a point to be considered as a core point.
+</code></pre>
+<h3 id="elliptic-envelope">Elliptic Envelope</h3>
+<pre><code>load_object : 
+  module: framework.FaultDetection  
+  name: FaultDetectionExperiment
+setup: 
+    # MUST NOT HAVE A data KEYWORD!
+    datetime_column :  ${ds}
+create_model :
+    model : &quot;ee&quot; # EllipticEnvelope
+    params:
+      contamination : 0.1 # between 0 and 0.5
+      # How much anomalies?
+</code></pre>
+<h3 id="isolation-forest">Isolation Forest</h3>
+<pre><code>load_object :
+  module: framework.FaultDetection  
+  name: FaultDetectionExperiment
+setup:
+    # MUST NOT HAVE A data KEYWORD!
+    datetime_column : ${ds}
+create_model :
+    model : &quot;iforest&quot; 
+    params:
+      n_estimators : 100 # amount of tress used
+      contamination : &quot;auto&quot; # auto
+      random_state : 0
+</code></pre>
+<h2 id="process-mining">Process Mining</h2>
+<h3 id="heuristicsminer">HeuristicsMiner</h3>
+<pre><code>load_object :
+  module: framework.ProcessMining
+  name: ProcessMiningExperiment
+setup:
+create_model :
+    model : &quot;heuristics&quot;
+    params : 
+</code></pre>
+<h3 id="topkrules">TopKRules</h3>
+<pre><code>load_object :
+  module: framework.ProcessMining
+  name: ProcessMiningExperiment
+setup:
+create_model :
+    model : &quot;topk&quot;
+    params : 
+</code></pre>
+<h3 id="apriori-association-rules">Apriori association rules</h3>
+<pre><code>load_object :
+  module: framework.ProcessMining
+  name: ProcessMiningExperiment
+setup:
+create_model :
+    model : &quot;apriori&quot;
+    params : 
+</code></pre>
+<h3 id="cmspam">CMSPAM</h3>
+<pre><code>load_object :
+  module: framework.ProcessMining
+  name: ProcessMiningExperiment
+setup:
+create_model :
+    model : &quot;cmspam&quot; 
+    params : 
+</code></pre>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="../plugins/" class="btn btn-neutral float-left" title="Plugins"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../experiments/" class="btn btn-neutral float-right" title="Experiments">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+    
+      <span><a href="../plugins/" style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+      <span><a href="../experiments/" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script src="../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "..";</script>
+    <script src="../js/theme_extra.js"></script>
+    <script src="../js/theme.js"></script>
+      <script src="../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>

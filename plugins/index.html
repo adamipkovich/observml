@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <link rel="shortcut icon" href="../img/favicon.ico" />
+    <title>Plugins - ObservML</title>
+    <link rel="stylesheet" href="../css/theme.css" />
+    <link rel="stylesheet" href="../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+        <link href="../assets/_mkdocstrings.css" rel="stylesheet" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "Plugins";
+        var mkdocs_page_input_path = "plugins.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href=".." class="icon icon-home"> ObservML
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="..">Home</a>
+                </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Getting Started</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../localdev/">Local Development</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../serve/">Docker Deployment</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../client/">Client Usage and Testing</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Core Components</span></p>
+              <ul class="current">
+                  <li class="toctree-l1"><a class="reference internal" href="../api/">API Reference</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../configuration/">Configuration</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../plugin_system/">Plugin System</a>
+                  </li>
+                  <li class="toctree-l1 current"><a class="reference internal current" href="#">Plugins</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#plugin-architecture">Plugin Architecture</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#plugin-types">Plugin Types</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#plugin-interface">Plugin Interface</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#configuration-system">Configuration System</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#configuration-file-structure">Configuration File Structure</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#loading-configuration">Loading Configuration</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#using-plugins">Using Plugins</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#creating-custom-plugins">Creating Custom Plugins</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#plugin-health-checks">Plugin Health Checks</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#plugin-lifecycle">Plugin Lifecycle</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#best-practices">Best Practices</a>
+    </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Framework</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../models/">Models</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../experiments/">Experiments</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../test_results/">Test Results</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Development</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../roadmap/">Roadmap</a>
+                  </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="..">ObservML</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href=".." class="icon icon-home" aria-label="Docs"></a></li>
+          <li class="breadcrumb-item">Core Components</li>
+      <li class="breadcrumb-item active">Plugins</li>
+    <li class="wy-breadcrumbs-aside">
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="experimenthub-plugin-system">ExperimentHub Plugin System</h1>
+<p>The ExperimentHub plugin system provides a flexible and extensible architecture for integrating various services and functionalities into the ExperimentHub. This document explains the plugin architecture, how to use existing plugins, and how to create custom plugins.</p>
+<h2 id="plugin-architecture">Plugin Architecture</h2>
+<p>The plugin system is based on a Protocol-based architecture, where each plugin type defines an interface that implementations must adhere to. The main components of the plugin system are:</p>
+<pre><code class="language-mermaid">graph TD
+    A[ExperimentHub] --&gt; B[Plugin System]
+    B --&gt; C[MLOps Plugin]
+    B --&gt; D[DataStream Plugin]
+    B --&gt; E[TaskQueue Plugin]
+    C --&gt; F[MLflowPlugin]
+    D --&gt; G[RabbitMQPlugin]
+    E --&gt; H[CeleryPlugin]
+</code></pre>
+<h3 id="plugin-types">Plugin Types</h3>
+<p>The ExperimentHub supports three main types of plugins:</p>
+<ol>
+<li><strong>MLOps Plugin</strong>: Handles model tracking, versioning, and artifact storage</li>
+<li>
+<p>Default implementation: <code>MLflowPlugin</code></p>
+</li>
+<li>
+<p><strong>DataStream Plugin</strong>: Handles data streaming and messaging</p>
+</li>
+<li>
+<p>Default implementation: <code>RabbitMQPlugin</code></p>
+</li>
+<li>
+<p><strong>TaskQueue Plugin</strong>: Handles asynchronous task processing</p>
+</li>
+<li>Default implementation: <code>CeleryPlugin</code></li>
+</ol>
+<h3 id="plugin-interface">Plugin Interface</h3>
+<p>All plugins must implement the <code>Plugin</code> Protocol defined in <code>framework/plugins/base.py</code>:</p>
+<pre><code class="language-python">class Plugin(Protocol):
+    &quot;&quot;&quot;Base interface for all plugins&quot;&quot;&quot;
+    plugin_type: str
+
+    def __init__(self, **kwargs) -&gt; None:
+        &quot;&quot;&quot;Initialize the plugin with configuration&quot;&quot;&quot;
+        ...
+
+    def initialize(self) -&gt; None:
+        &quot;&quot;&quot;Initialize the plugin&quot;&quot;&quot;
+        ...
+
+    def shutdown(self) -&gt; None:
+        &quot;&quot;&quot;Clean up resources when shutting down&quot;&quot;&quot;
+        ...
+
+    def health_check(self) -&gt; Tuple[bool, Dict[str, Any]]:
+        &quot;&quot;&quot;Check if the plugin is working correctly
+
+        Returns:
+            Tuple containing:
+            - Boolean indicating if the plugin is healthy
+            - Dictionary with additional health information and metrics
+        &quot;&quot;&quot;
+        ...
+</code></pre>
+<p>Each plugin type then extends this base interface with additional methods specific to its functionality.</p>
+<h2 id="configuration-system">Configuration System</h2>
+<p>The ExperimentHub plugin system is configured using a YAML configuration file (<code>hub_config.yaml</code>). This file specifies which plugins to use, their configurations, and available experiment types.</p>
+<h3 id="configuration-file-structure">Configuration File Structure</h3>
+<pre><code class="language-yaml"># hub_config.yaml
+version: &quot;1.0&quot;
+
+# Global settings
+global:
+  log_level: &quot;info&quot;
+  environment: &quot;development&quot;
+
+# Plugin configurations
+plugins:
+  # MLOps plugin configuration
+  mlops:
+    enabled: true
+    type: &quot;mlflow&quot;  # Which implementation to use
+    config:
+      mlflow_uri: &quot;http://localhost:5000&quot;
+
+  # Data stream plugin configuration
+  datastream:
+    enabled: true
+    type: &quot;rabbitmq&quot;
+    config:
+      host: &quot;localhost&quot;
+      port: 5672
+      username: &quot;guest&quot;
+      password: &quot;guest&quot;
+
+  # Task queue plugin configuration
+  taskqueue:
+    enabled: false  # Disabled by default, enable when needed
+    type: &quot;celery&quot;
+    config:
+      broker_url: &quot;amqp://guest:guest@localhost:5672//&quot;
+      backend_url: &quot;redis://localhost:6379/0&quot;
+      app_name: &quot;experiment_hub&quot;
+
+# Available experiment types
+experiments:
+  - name: &quot;time_series&quot;
+    module: &quot;framework.TimeSeriesAnalysis&quot;
+    class: &quot;TimeSeriesExperiment&quot;
+    enabled: true
+
+  - name: &quot;fault_detection&quot;
+    module: &quot;framework.FaultDetection&quot;
+    class: &quot;FaultDetectionExperiment&quot;
+    enabled: true
+</code></pre>
+<h3 id="loading-configuration">Loading Configuration</h3>
+<p>The ExperimentHub can be initialized from a configuration file using the <code>from_config</code> class method:</p>
+<pre><code class="language-python">from framework.ExperimentHub import ExperimentHub
+
+# Initialize from configuration file
+hub = ExperimentHub.from_config(&quot;hub_config.yaml&quot;)
+</code></pre>
+<h2 id="using-plugins">Using Plugins</h2>
+<p>Once the ExperimentHub is initialized with plugins, you can use them through the ExperimentHub API:</p>
+<pre><code class="language-python"># Get a plugin by type
+mlops_plugin = hub.get_plugin(&quot;mlops&quot;)
+datastream_plugin = hub.get_plugin(&quot;datastream&quot;)
+taskqueue_plugin = hub.get_plugin(&quot;taskqueue&quot;)
+
+# Check plugin health
+health_info = hub.check_plugin_health()
+</code></pre>
+<h2 id="creating-custom-plugins">Creating Custom Plugins</h2>
+<p>You can create custom plugins by implementing the appropriate plugin interface. Here's an example of creating a custom MLOps plugin:</p>
+<pre><code class="language-python">from framework.plugins.mlops import MLOpsPlugin
+from typing import Any, Dict, Tuple
+
+class CustomMLOpsPlugin(MLOpsPlugin):
+    &quot;&quot;&quot;Custom implementation of MLOpsPlugin&quot;&quot;&quot;
+    plugin_type = &quot;mlops&quot;
+
+    def __init__(self, custom_param: str, **kwargs):
+        self.custom_param = custom_param
+
+    def initialize(self) -&gt; None:
+        &quot;&quot;&quot;Initialize the plugin&quot;&quot;&quot;
+        # Custom initialization logic
+        pass
+
+    def shutdown(self) -&gt; None:
+        &quot;&quot;&quot;Clean up resources&quot;&quot;&quot;
+        # Custom cleanup logic
+        pass
+
+    def health_check(self) -&gt; Tuple[bool, Dict[str, Any]]:
+        &quot;&quot;&quot;Check if plugin is working correctly&quot;&quot;&quot;
+        try:
+            # Custom health check logic
+            return True, {&quot;status&quot;: &quot;connected&quot;, &quot;custom_param&quot;: self.custom_param}
+        except Exception as e:
+            return False, {&quot;status&quot;: &quot;error&quot;, &quot;message&quot;: str(e)}
+
+    # Implement other MLOpsPlugin methods
+    # ...
+</code></pre>
+<p>To use your custom plugin, you can register it with the ExperimentHub:</p>
+<pre><code class="language-python">from framework.ExperimentHub import ExperimentHub
+
+# Create ExperimentHub
+hub = ExperimentHub()
+
+# Create and register custom plugin
+custom_plugin = CustomMLOpsPlugin(custom_param=&quot;value&quot;)
+hub.register_plugin(custom_plugin)
+</code></pre>
+<h2 id="plugin-health-checks">Plugin Health Checks</h2>
+<p>All plugins must implement a <code>health_check</code> method that verifies if the plugin is working correctly. This method returns a tuple containing:</p>
+<ol>
+<li>A boolean indicating if the plugin is healthy</li>
+<li>A dictionary with additional health information and metrics</li>
+</ol>
+<p>You can check the health of all registered plugins using the <code>check_plugin_health</code> method of the ExperimentHub:</p>
+<pre><code class="language-python">health_info = hub.check_plugin_health()
+for plugin_type, info in health_info.items():
+    status = &quot;HEALTHY&quot; if info[&quot;healthy&quot;] else &quot;UNHEALTHY&quot;
+    print(f&quot;{plugin_type}: {status}&quot;)
+    print(f&quot;  Details: {info['details']}&quot;)
+</code></pre>
+<h2 id="plugin-lifecycle">Plugin Lifecycle</h2>
+<p>Plugins go through the following lifecycle:</p>
+<ol>
+<li><strong>Initialization</strong>: The plugin is created with configuration parameters</li>
+<li><strong>Registration</strong>: The plugin is registered with the ExperimentHub</li>
+<li><strong>Initialization</strong>: The <code>initialize</code> method is called to set up the plugin</li>
+<li><strong>Usage</strong>: The plugin is used by the ExperimentHub</li>
+<li><strong>Shutdown</strong>: The <code>shutdown</code> method is called to clean up resources</li>
+</ol>
+<h2 id="best-practices">Best Practices</h2>
+<p>When working with plugins, follow these best practices:</p>
+<ol>
+<li><strong>Error Handling</strong>: Plugins should handle errors gracefully and provide meaningful error messages</li>
+<li><strong>Resource Management</strong>: Plugins should clean up resources in the <code>shutdown</code> method</li>
+<li><strong>Configuration</strong>: Plugins should accept configuration parameters in the constructor</li>
+<li><strong>Health Checks</strong>: Plugins should implement thorough health checks</li>
+<li><strong>Documentation</strong>: Document the purpose, configuration, and usage of your plugins</li>
+</ol>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="../plugin_system/" class="btn btn-neutral float-left" title="Plugin System"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../models/" class="btn btn-neutral float-right" title="Models">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+    
+      <span><a href="../plugin_system/" style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+      <span><a href="../models/" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script src="../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "..";</script>
+    <script src="../js/theme_extra.js"></script>
+    <script src="../js/theme.js"></script>
+      <script src="../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>

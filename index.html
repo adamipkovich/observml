@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="description" content="None" />
+      <link rel="shortcut icon" href="img/favicon.ico" />
+    <title>ObservML</title>
+    <link rel="stylesheet" href="css/theme.css" />
+    <link rel="stylesheet" href="css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+        <link href="assets/_mkdocstrings.css" rel="stylesheet" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "Home";
+        var mkdocs_page_input_path = "index.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href="." class="icon icon-home"> ObservML
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="./search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+                <li class="toctree-l1 current"><a class="reference internal current" href="#">Home</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#what-is-observml">What is ObservML?</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#key-features">Key Features</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#prerequisites">Prerequisites</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#system-requirements">System Requirements</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#development-tools-optional">Development Tools (Optional)</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#quick-installation">Quick Installation</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#1-clone-the-repository">1. Clone the Repository</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#2-choose-installation-method">2. Choose Installation Method</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#option-a-poetry-recommended">Option A: Poetry (Recommended)</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#option-b-pip">Option B: pip</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#3-start-infrastructure-services">3. Start Infrastructure Services</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#4-configure-observml">4. Configure ObservML</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#5-start-the-api-server">5. Start the API Server</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#architecture-overview">Architecture Overview</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#experimenthub">ExperimentHub</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#plugin-system">Plugin System</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#experiment-types">Experiment Types</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#basic-workflow">Basic Workflow</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#step-by-step-process">Step-by-Step Process</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#communication-architecture">Communication Architecture</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#key-benefits">Key Benefits</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#getting-help">Getting Help</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#documentation-structure">Documentation Structure</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#support-channels">Support Channels</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#contributing">Contributing</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#next-steps">Next Steps</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#project-history">Project History</a>
+    </li>
+    </ul>
+                </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Getting Started</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="localdev/">Local Development</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="serve/">Docker Deployment</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="client/">Client Usage and Testing</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Core Components</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="api/">API Reference</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="configuration/">Configuration</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="plugin_system/">Plugin System</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="plugins/">Plugins</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Framework</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="models/">Models</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="experiments/">Experiments</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="test_results/">Test Results</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Development</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="roadmap/">Roadmap</a>
+                  </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href=".">ObservML</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="." class="icon icon-home" aria-label="Docs"></a></li>
+      <li class="breadcrumb-item active">Home</li>
+    <li class="wy-breadcrumbs-aside">
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="welcome-to-observml-documentation">Welcome to ObservML Documentation</h1>
+<p>ObservML is a comprehensive machine learning framework designed for process monitoring, anomaly detection, fault isolation, and time series analysis. Built with a plugin-based architecture, it provides easy-to-use microservices with integrated MLOps, tracking, and deployment capabilities.</p>
+<h2 id="what-is-observml">What is ObservML?</h2>
+<p>ObservML (Observable Machine Learning) is a modular framework that focuses on industrial process monitoring and anomaly detection. The project evolved from MMLW (Modular Machine Learning Workflows) to provide a more robust, scalable, and production-ready solution for machine learning in industrial environments.</p>
+<h3 id="key-features">Key Features</h3>
+<ul>
+<li><strong>ExperimentHub Architecture</strong>: Central management system for multiple experiments</li>
+<li><strong>Plugin System</strong>: Extensible architecture with MLOps, DataStream, and custom plugins</li>
+<li><strong>Configuration-Driven</strong>: YAML-based configuration for easy setup and deployment</li>
+<li><strong>REST API</strong>: FastAPI-based API with automatic documentation</li>
+<li><strong>Real-time Processing</strong>: RabbitMQ integration for streaming data and predictions</li>
+<li><strong>MLOps Integration</strong>: Built-in MLflow support for experiment tracking and model registry</li>
+</ul>
+<h2 id="prerequisites">Prerequisites</h2>
+<p>Before getting started with ObservML, ensure you have the following:</p>
+<h3 id="system-requirements">System Requirements</h3>
+<ol>
+<li><strong>Computer</strong>: At least 16GB RAM (32GB+ recommended for production), 32-64GB free disk space</li>
+<li><strong>Operating System</strong>: Linux, macOS, or Windows with WSL2</li>
+<li><strong>Python</strong>: Version 3.11 or higher</li>
+<li><strong>Docker</strong>: Docker Engine and Docker Compose (for containerized deployment)</li>
+<li><strong>Git</strong>: For cloning the repository</li>
+</ol>
+<h3 id="development-tools-optional">Development Tools (Optional)</h3>
+<ul>
+<li><strong>IDE</strong>: VSCode, PyCharm, or any preferred IDE</li>
+<li><strong>Poetry</strong>: For dependency management (recommended)</li>
+<li><strong>Make</strong>: For using Makefile commands (optional)</li>
+</ul>
+<h2 id="quick-installation">Quick Installation</h2>
+<h3 id="1-clone-the-repository">1. Clone the Repository</h3>
+<pre><code class="language-bash">git clone https://github.com/adamipkovich/observml.git
+cd observml
+</code></pre>
+<h3 id="2-choose-installation-method">2. Choose Installation Method</h3>
+<h4 id="option-a-poetry-recommended">Option A: Poetry (Recommended)</h4>
+<pre><code class="language-bash"># Install Poetry if not already installed
+curl -sSL https://install.python-poetry.org | python3 -
+
+# Install dependencies
+poetry install
+
+# Activate virtual environment
+poetry shell
+</code></pre>
+<h4 id="option-b-pip">Option B: pip</h4>
+<pre><code class="language-bash"># Create virtual environment
+python -m venv venv
+source venv/bin/activate  # On Windows: venv\Scripts\activate
+
+# Install dependencies
+pip install -r requirements.txt
+</code></pre>
+<h3 id="3-start-infrastructure-services">3. Start Infrastructure Services</h3>
+<pre><code class="language-bash"># Start MLflow and RabbitMQ using Docker
+docker-compose up -d mlflow rabbitmq
+</code></pre>
+<h3 id="4-configure-observml">4. Configure ObservML</h3>
+<pre><code class="language-bash"># Copy example configuration
+cp hub_config.yaml hub_config.yaml
+
+# Edit configuration as needed
+nano hub_config.yaml
+</code></pre>
+<h3 id="5-start-the-api-server">5. Start the API Server</h3>
+<pre><code class="language-bash">python ExperimentHubAPI.py
+</code></pre>
+<p>The API will be available at:
+- <strong>API Server</strong>: http://localhost:8010
+- <strong>API Documentation</strong>: http://localhost:8010/docs
+- <strong>MLflow UI</strong>: http://localhost:5000
+- <strong>RabbitMQ Management</strong>: http://localhost:15672 (guest/guest)</p>
+<h2 id="architecture-overview">Architecture Overview</h2>
+<p>ObservML is built around several core components:</p>
+<h3 id="experimenthub">ExperimentHub</h3>
+<p>The central component that manages all experiments, plugins, and configurations. It provides:
+- Experiment lifecycle management (create, train, predict, save, load)
+- Plugin coordination and health monitoring
+- Configuration management
+- API endpoint handling</p>
+<h3 id="plugin-system">Plugin System</h3>
+<p>ObservML uses a plugin architecture for extensibility:</p>
+<ul>
+<li><strong>MLOps Plugin</strong>: Handles experiment tracking and model registry (MLflow)</li>
+<li><strong>DataStream Plugin</strong>: Manages real-time data streaming (RabbitMQ)</li>
+<li><strong>Custom Plugins</strong>: Extensible system for adding new functionality</li>
+</ul>
+<h3 id="experiment-types">Experiment Types</h3>
+<p>Modular experiment implementations for different use cases:
+- <strong>Time Series Analysis</strong>: Forecasting and anomaly detection in time series data
+- <strong>Fault Detection</strong>: Anomaly detection in sensor data
+- <strong>Fault Isolation</strong>: Classification and root cause analysis
+- <strong>Process Mining</strong>: Business process analysis and optimization</p>
+<h2 id="basic-workflow">Basic Workflow</h2>
+<p>ObservML follows a simple workflow for machine learning experiments:</p>
+<pre><code class="language-mermaid">graph TD
+    A[Configure System] --&gt; B[Create Experiment]
+    B --&gt; C[Send Data via RabbitMQ]
+    C --&gt; D[Train Model]
+    D --&gt; E[Save to MLflow]
+    E --&gt; F[Make Predictions]
+    F --&gt; G[Visualize Results]
+    G --&gt; H[Monitor Performance]
+    H --&gt; I{Retrain Needed?}
+    I --&gt;|Yes| D
+    I --&gt;|No| F
+</code></pre>
+<h3 id="step-by-step-process">Step-by-Step Process</h3>
+<ol>
+<li><strong>Configuration</strong>: Set up plugins and experiment types in <code>hub_config.yaml</code></li>
+<li><strong>Data Preparation</strong>: Send training data through RabbitMQ queues</li>
+<li><strong>Experiment Creation</strong>: Create and configure experiments via API</li>
+<li><strong>Training</strong>: Train models with automatic MLflow tracking</li>
+<li><strong>Prediction</strong>: Make real-time predictions on streaming data</li>
+<li><strong>Monitoring</strong>: Track model performance and trigger retraining when needed</li>
+</ol>
+<h2 id="communication-architecture">Communication Architecture</h2>
+<p>ObservML uses a microservices architecture with message-based communication:</p>
+<pre><code class="language-mermaid">graph LR
+    A[Data Source] --&gt; B[RabbitMQ]
+    B --&gt; C[ExperimentHub]
+    C --&gt; D[MLflow]
+    C --&gt; E[Model Storage]
+    F[API Client] --&gt; G[FastAPI]
+    G --&gt; C
+    C --&gt; H[Predictions]
+    H --&gt; I[Visualization]
+</code></pre>
+<h3 id="key-benefits">Key Benefits</h3>
+<ul>
+<li><strong>Decoupled Architecture</strong>: Services can be scaled independently</li>
+<li><strong>Asynchronous Processing</strong>: Non-blocking operations for better performance</li>
+<li><strong>Fault Tolerance</strong>: Message queues provide reliability and retry mechanisms</li>
+<li><strong>Scalability</strong>: Easy to add more workers or services as needed</li>
+</ul>
+<h2 id="getting-help">Getting Help</h2>
+<h3 id="documentation-structure">Documentation Structure</h3>
+<p>This documentation is organized into several sections:</p>
+<ul>
+<li><strong><a href="localdev/">Local Development</a></strong>: Setting up a development environment</li>
+<li><strong><a href="serve/">Deployment</a></strong>: Production deployment with Docker</li>
+<li><strong><a href="client/">Client Usage</a></strong>: Using the API and client libraries</li>
+<li><strong><a href="api/">API Reference</a></strong>: Complete API documentation</li>
+<li><strong><a href="configuration/">Configuration</a></strong>: Configuration options and examples</li>
+<li><strong><a href="plugin_system/">Plugin System</a></strong>: Extending ObservML with plugins</li>
+<li><strong><a href="models/">Models</a></strong>: Available models and algorithms</li>
+<li><strong><a href="experiments/">Experiments</a></strong>: Experiment types and configurations</li>
+</ul>
+<h3 id="support-channels">Support Channels</h3>
+<ul>
+<li><strong>GitHub Issues</strong>: Report bugs and request features</li>
+<li><strong>GitHub Discussions</strong>: Ask questions and share ideas</li>
+<li><strong>Documentation</strong>: Comprehensive guides and API reference</li>
+<li><strong>Examples</strong>: Sample configurations and use cases</li>
+</ul>
+<h3 id="contributing">Contributing</h3>
+<p>ObservML is an open-source project and welcomes contributions:</p>
+<ol>
+<li><strong>Fork</strong> the repository</li>
+<li><strong>Create</strong> a feature branch</li>
+<li><strong>Make</strong> your changes</li>
+<li><strong>Add</strong> tests for new functionality</li>
+<li><strong>Submit</strong> a pull request</li>
+</ol>
+<h2 id="next-steps">Next Steps</h2>
+<p>Now that you have ObservML installed, you can:</p>
+<ol>
+<li><strong><a href="localdev/">Set up local development</a></strong> for experimentation</li>
+<li><strong><a href="serve/">Deploy to production</a></strong> using Docker</li>
+<li><strong><a href="api/">Learn the API</a></strong> for programmatic access</li>
+<li><strong><a href="client/">Explore examples</a></strong> to understand common use cases</li>
+<li><strong><a href="configuration/">Configure experiments</a></strong> for your specific needs</li>
+</ol>
+<h2 id="project-history">Project History</h2>
+<p>ObservML evolved from the MMLW (Modular Machine Learning Workflows) project, which was part of research project 2020-1.1.2-PIACI-KFI-2020-00062. The project has been redesigned with:</p>
+<ul>
+<li>Modern plugin architecture</li>
+<li>Improved scalability and performance</li>
+<li>Better separation of concerns</li>
+<li>Enhanced configuration management</li>
+<li>Production-ready deployment options</li>
+</ul>
+<p>The focus remains on providing accessible machine learning tools for industrial process monitoring and anomaly detection, but with a more robust and extensible foundation.</p>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="localdev/" class="btn btn-neutral float-right" title="Local Development">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+    
+    
+      <span><a href="localdev/" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script src="js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = ".";</script>
+    <script src="js/theme_extra.js"></script>
+    <script src="js/theme.js"></script>
+      <script src="search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>
+
+<!--
+MkDocs version : 1.6.1
+Build Date UTC : 2025-07-22 06:26:07.335866+00:00
+-->

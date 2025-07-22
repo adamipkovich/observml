@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <link rel="shortcut icon" href="../img/favicon.ico" />
+    <title>Configuration - ObservML</title>
+    <link rel="stylesheet" href="../css/theme.css" />
+    <link rel="stylesheet" href="../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+        <link href="../assets/_mkdocstrings.css" rel="stylesheet" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "Configuration";
+        var mkdocs_page_input_path = "configuration.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href=".." class="icon icon-home"> ObservML
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="..">Home</a>
+                </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Getting Started</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../localdev/">Local Development</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../serve/">Docker Deployment</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../client/">Client Usage and Testing</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Core Components</span></p>
+              <ul class="current">
+                  <li class="toctree-l1"><a class="reference internal" href="../api/">API Reference</a>
+                  </li>
+                  <li class="toctree-l1 current"><a class="reference internal current" href="#">Configuration</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#configuration-file-structure">Configuration File Structure</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#global-settings">Global Settings</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#plugin-configurations">Plugin Configurations</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#experiment-types">Experiment Types</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#loading-configuration">Loading Configuration</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#environment-variables">Environment Variables</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#configuration-best-practices">Configuration Best Practices</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#separate-configuration-by-environment">Separate Configuration by Environment</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#use-environment-variables-for-sensitive-information">Use Environment Variables for Sensitive Information</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#document-configuration-parameters">Document Configuration Parameters</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#validate-configuration">Validate Configuration</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#use-default-values">Use Default Values</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#example-configurations">Example Configurations</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#development-configuration">Development Configuration</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#production-configuration">Production Configuration</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#troubleshooting">Troubleshooting</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#configuration-file-not-found">Configuration File Not Found</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#invalid-configuration">Invalid Configuration</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#plugin-initialization-errors">Plugin Initialization Errors</a>
+    </li>
+        </ul>
+    </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../plugin_system/">Plugin System</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../plugins/">Plugins</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Framework</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../models/">Models</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../experiments/">Experiments</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../test_results/">Test Results</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Development</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../roadmap/">Roadmap</a>
+                  </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="..">ObservML</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href=".." class="icon icon-home" aria-label="Docs"></a></li>
+          <li class="breadcrumb-item">Core Components</li>
+      <li class="breadcrumb-item active">Configuration</li>
+    <li class="wy-breadcrumbs-aside">
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="experimenthub-configuration-system">ExperimentHub Configuration System</h1>
+<p>The ExperimentHub configuration system provides a flexible way to configure the ExperimentHub, its plugins, and available experiment types. This document explains the configuration file structure, how to load configuration, and best practices for configuration management.</p>
+<h2 id="configuration-file-structure">Configuration File Structure</h2>
+<p>The ExperimentHub is configured using a YAML configuration file (<code>hub_config.yaml</code>). The file has the following structure:</p>
+<pre><code class="language-yaml"># hub_config.yaml
+version: &quot;1.0&quot;
+
+# Global settings
+global:
+  log_level: &quot;info&quot;
+  environment: &quot;development&quot;
+
+# Plugin configurations
+plugins:
+  # MLOps plugin configuration
+  mlops:
+    enabled: true
+    type: &quot;mlflow&quot;  # Which implementation to use
+    config:
+      mlflow_uri: &quot;http://localhost:5000&quot;
+
+  # Data stream plugin configuration
+  datastream:
+    enabled: true
+    type: &quot;rabbitmq&quot;
+    config:
+      host: &quot;localhost&quot;
+      port: 5672
+      username: &quot;guest&quot;
+      password: &quot;guest&quot;
+
+  # Task queue plugin configuration - REMOVED
+  # The task queue functionality has been removed from ObservML
+  # Training and prediction operations are now handled synchronously
+
+# Available experiment types
+experiments:
+  - name: &quot;time_series&quot;
+    module: &quot;framework.TimeSeriesAnalysis&quot;
+    class: &quot;TimeSeriesExperiment&quot;
+    enabled: true
+
+  - name: &quot;fault_detection&quot;
+    module: &quot;framework.FaultDetection&quot;
+    class: &quot;FaultDetectionExperiment&quot;
+    enabled: true
+
+  - name: &quot;fault_isolation&quot;
+    module: &quot;framework.FaultIsolation&quot;
+    class: &quot;FaultIsolationExperiment&quot;
+    enabled: true
+
+  - name: &quot;process_mining&quot;
+    module: &quot;framework.ProcessMining&quot;
+    class: &quot;ProcessMiningExperiment&quot;
+    enabled: true
+</code></pre>
+<h3 id="global-settings">Global Settings</h3>
+<p>The <code>global</code> section contains global settings for the ExperimentHub:</p>
+<ul>
+<li><code>log_level</code>: The logging level (e.g., "debug", "info", "warning", "error")</li>
+<li><code>environment</code>: The environment (e.g., "development", "testing", "production")</li>
+</ul>
+<h3 id="plugin-configurations">Plugin Configurations</h3>
+<p>The <code>plugins</code> section contains configurations for each plugin type:</p>
+<ul>
+<li><code>mlops</code>: Configuration for the MLOps plugin</li>
+<li><code>datastream</code>: Configuration for the DataStream plugin</li>
+<li><code>taskqueue</code>: Configuration for the TaskQueue plugin</li>
+</ul>
+<p>Each plugin configuration has the following structure:</p>
+<ul>
+<li><code>enabled</code>: Whether the plugin is enabled</li>
+<li><code>type</code>: The type of plugin implementation to use</li>
+<li><code>config</code>: Configuration parameters specific to the plugin implementation</li>
+</ul>
+<h3 id="experiment-types">Experiment Types</h3>
+<p>The <code>experiments</code> section contains a list of available experiment types:</p>
+<ul>
+<li><code>name</code>: The name of the experiment type</li>
+<li><code>module</code>: The Python module containing the experiment class</li>
+<li><code>class</code>: The name of the experiment class</li>
+<li><code>enabled</code>: Whether the experiment type is enabled</li>
+</ul>
+<h2 id="loading-configuration">Loading Configuration</h2>
+<p>The ExperimentHub can be initialized from a configuration file using the <code>from_config</code> class method:</p>
+<pre><code class="language-python">from framework.ExperimentHub import ExperimentHub
+
+# Initialize from configuration file
+hub = ExperimentHub.from_config(&quot;hub_config.yaml&quot;)
+</code></pre>
+<p>The <code>from_config</code> method performs the following steps:</p>
+<ol>
+<li>Loads the configuration file</li>
+<li>Creates an ExperimentHub instance</li>
+<li>Initializes plugins based on the configuration</li>
+<li>Registers available experiment types</li>
+<li>Returns the initialized ExperimentHub</li>
+</ol>
+<h2 id="environment-variables">Environment Variables</h2>
+<p>The ExperimentHubAPI also supports configuration through environment variables:</p>
+<ul>
+<li><code>HUB_CONFIG_PATH</code>: Path to the configuration file (default: "hub_config.yaml")</li>
+<li><code>MLFLOW_URI</code>: URI for MLflow tracking server</li>
+<li><code>RABBIT_HOST</code>: Hostname for RabbitMQ server</li>
+<li><code>RABBIT_PORT</code>: Port for RabbitMQ server</li>
+<li><code>RABBIT_USER</code>: Username for RabbitMQ server</li>
+<li><code>RABBIT_PASSWORD</code>: Password for RabbitMQ server</li>
+</ul>
+<p>If the configuration file specified by <code>HUB_CONFIG_PATH</code> exists, it will be used. Otherwise, the ExperimentHub will be initialized using environment variables.</p>
+<h2 id="configuration-best-practices">Configuration Best Practices</h2>
+<h3 id="separate-configuration-by-environment">Separate Configuration by Environment</h3>
+<p>Create separate configuration files for different environments:</p>
+<ul>
+<li><code>hub_config.dev.yaml</code>: Development environment</li>
+<li><code>hub_config.test.yaml</code>: Testing environment</li>
+<li><code>hub_config.prod.yaml</code>: Production environment</li>
+</ul>
+<h3 id="use-environment-variables-for-sensitive-information">Use Environment Variables for Sensitive Information</h3>
+<p>Use environment variables for sensitive information like passwords and API keys:</p>
+<pre><code class="language-yaml">plugins:
+  datastream:
+    enabled: true
+    type: &quot;rabbitmq&quot;
+    config:
+      host: &quot;localhost&quot;
+      port: 5672
+      username: &quot;${RABBIT_USER}&quot;
+      password: &quot;${RABBIT_PASSWORD}&quot;
+</code></pre>
+<h3 id="document-configuration-parameters">Document Configuration Parameters</h3>
+<p>Document all configuration parameters, including their purpose, allowed values, and default values.</p>
+<h3 id="validate-configuration">Validate Configuration</h3>
+<p>Validate the configuration file before using it:</p>
+<pre><code class="language-python">def validate_config(config):
+    &quot;&quot;&quot;Validate the configuration file&quot;&quot;&quot;
+    # Check required sections
+    required_sections = [&quot;version&quot;, &quot;plugins&quot;, &quot;experiments&quot;]
+    for section in required_sections:
+        if section not in config:
+            raise ValueError(f&quot;Missing required section: {section}&quot;)
+
+    # Check plugin configurations
+    for plugin_type, plugin_config in config[&quot;plugins&quot;].items():
+        if &quot;enabled&quot; not in plugin_config:
+            raise ValueError(f&quot;Missing 'enabled' field in {plugin_type} plugin configuration&quot;)
+        if plugin_config[&quot;enabled&quot;] and &quot;type&quot; not in plugin_config:
+            raise ValueError(f&quot;Missing 'type' field in {plugin_type} plugin configuration&quot;)
+        if plugin_config[&quot;enabled&quot;] and &quot;config&quot; not in plugin_config:
+            raise ValueError(f&quot;Missing 'config' field in {plugin_type} plugin configuration&quot;)
+
+    # Check experiment configurations
+    for i, exp_config in enumerate(config[&quot;experiments&quot;]):
+        if &quot;name&quot; not in exp_config:
+            raise ValueError(f&quot;Missing 'name' field in experiment configuration at index {i}&quot;)
+        if &quot;module&quot; not in exp_config:
+            raise ValueError(f&quot;Missing 'module' field in experiment configuration at index {i}&quot;)
+        if &quot;class&quot; not in exp_config:
+            raise ValueError(f&quot;Missing 'class' field in experiment configuration at index {i}&quot;)
+</code></pre>
+<h3 id="use-default-values">Use Default Values</h3>
+<p>Provide default values for optional configuration parameters:</p>
+<pre><code class="language-python">def get_config_value(config, path, default=None):
+    &quot;&quot;&quot;Get a value from the configuration, with a default value&quot;&quot;&quot;
+    parts = path.split(&quot;.&quot;)
+    current = config
+    for part in parts:
+        if part not in current:
+            return default
+        current = current[part]
+    return current
+</code></pre>
+<h2 id="example-configurations">Example Configurations</h2>
+<h3 id="development-configuration">Development Configuration</h3>
+<pre><code class="language-yaml"># hub_config.dev.yaml
+version: &quot;1.0&quot;
+
+global:
+  log_level: &quot;debug&quot;
+  environment: &quot;development&quot;
+
+plugins:
+  mlops:
+    enabled: true
+    type: &quot;mlflow&quot;
+    config:
+      mlflow_uri: &quot;http://localhost:5000&quot;
+
+  datastream:
+    enabled: true
+    type: &quot;rabbitmq&quot;
+    config:
+      host: &quot;localhost&quot;
+      port: 5672
+      username: &quot;guest&quot;
+      password: &quot;guest&quot;
+
+experiments:
+  - name: &quot;time_series&quot;
+    module: &quot;framework.TimeSeriesAnalysis&quot;
+    class: &quot;TimeSeriesExperiment&quot;
+    enabled: true
+
+  - name: &quot;fault_detection&quot;
+    module: &quot;framework.FaultDetection&quot;
+    class: &quot;FaultDetectionExperiment&quot;
+    enabled: true
+</code></pre>
+<h3 id="production-configuration">Production Configuration</h3>
+<pre><code class="language-yaml"># hub_config.prod.yaml
+version: &quot;1.0&quot;
+
+global:
+  log_level: &quot;info&quot;
+  environment: &quot;production&quot;
+
+plugins:
+  mlops:
+    enabled: true
+    type: &quot;mlflow&quot;
+    config:
+      mlflow_uri: &quot;http://mlflow.example.com&quot;
+
+  datastream:
+    enabled: true
+    type: &quot;rabbitmq&quot;
+    config:
+      host: &quot;rabbitmq.example.com&quot;
+      port: 5672
+      username: &quot;${RABBIT_USER}&quot;
+      password: &quot;${RABBIT_PASSWORD}&quot;
+
+experiments:
+  - name: &quot;time_series&quot;
+    module: &quot;framework.TimeSeriesAnalysis&quot;
+    class: &quot;TimeSeriesExperiment&quot;
+    enabled: true
+
+  - name: &quot;fault_detection&quot;
+    module: &quot;framework.FaultDetection&quot;
+    class: &quot;FaultDetectionExperiment&quot;
+    enabled: true
+
+  - name: &quot;fault_isolation&quot;
+    module: &quot;framework.FaultIsolation&quot;
+    class: &quot;FaultIsolationExperiment&quot;
+    enabled: true
+
+  - name: &quot;process_mining&quot;
+    module: &quot;framework.ProcessMining&quot;
+    class: &quot;ProcessMiningExperiment&quot;
+    enabled: true
+</code></pre>
+<h2 id="troubleshooting">Troubleshooting</h2>
+<h3 id="configuration-file-not-found">Configuration File Not Found</h3>
+<p>If the configuration file is not found, the ExperimentHub will fall back to using environment variables. Make sure the configuration file exists and is accessible.</p>
+<h3 id="invalid-configuration">Invalid Configuration</h3>
+<p>If the configuration file is invalid, the ExperimentHub will raise an error. Check the error message for details on what's wrong with the configuration.</p>
+<h3 id="plugin-initialization-errors">Plugin Initialization Errors</h3>
+<p>If a plugin fails to initialize, check the plugin configuration and make sure all required parameters are provided.</p>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="../api/" class="btn btn-neutral float-left" title="API Reference"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../plugin_system/" class="btn btn-neutral float-right" title="Plugin System">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+    
+      <span><a href="../api/" style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+      <span><a href="../plugin_system/" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script src="../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "..";</script>
+    <script src="../js/theme_extra.js"></script>
+    <script src="../js/theme.js"></script>
+      <script src="../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>

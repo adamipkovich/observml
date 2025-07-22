@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <link rel="shortcut icon" href="../img/favicon.ico" />
+    <title>Docker Deployment - ObservML</title>
+    <link rel="stylesheet" href="../css/theme.css" />
+    <link rel="stylesheet" href="../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+        <link href="../assets/_mkdocstrings.css" rel="stylesheet" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "Docker Deployment";
+        var mkdocs_page_input_path = "serve.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href=".." class="icon icon-home"> ObservML
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="..">Home</a>
+                </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Getting Started</span></p>
+              <ul class="current">
+                  <li class="toctree-l1"><a class="reference internal" href="../localdev/">Local Development</a>
+                  </li>
+                  <li class="toctree-l1 current"><a class="reference internal current" href="#">Docker Deployment</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#project-template">Project template</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#rabbitmq">RabbitMQ</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#building-images">Building images</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#running-docker-images-with-compose">Running Docker images with compose</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#interfaces">Interfaces</a>
+    </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../client/">Client Usage and Testing</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Core Components</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../api/">API Reference</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../configuration/">Configuration</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../plugin_system/">Plugin System</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../plugins/">Plugins</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Framework</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../models/">Models</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../experiments/">Experiments</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../test_results/">Test Results</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Development</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../roadmap/">Roadmap</a>
+                  </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="..">ObservML</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href=".." class="icon icon-home" aria-label="Docs"></a></li>
+          <li class="breadcrumb-item">Getting Started</li>
+      <li class="breadcrumb-item active">Docker Deployment</li>
+    <li class="wy-breadcrumbs-aside">
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="containerization-of-mmlw-docker">Containerization of MMLW -- Docker</h1>
+<p>This section will tell the reader how to use the MMLW in production. For starters, you can find .dockerfiles (for mlflow, backend) in the repository, which have to be built first to be used. Docker compose will start the MMLW by launching interconnected microservices with the help of docker compose.</p>
+<p>The example project contains the docker-compose.yaml and the configuration files we require.</p>
+<hr />
+<h3 id="project-template">Project template</h3>
+<p>Pull "main" branch to obtain the code to communicate with the backend. You can use the project template's mindeps.txt for minimal dependency:</p>
+<pre><code>pip install -r mindeps.txt
+</code></pre>
+<p>NOTE: Minimal dependencies will make you unable to run locally. It will only allow for scripts to run. This way, the size of the virtual environment is reduced significantly.</p>
+<hr />
+<h2 id="rabbitmq">RabbitMQ</h2>
+<p>This image is relatively easy to get. It should be pulled from <a href="https://hub.docker.com/_/rabbitmq">this</a> Docker repository. 
+Docker is used in terminal, so either cmd, or a python IDE can accomodate. Walkthrough for:
+- <a href="https://sysdig.com/learn-cloud-native/container-security/what-is-docker-cli/">Linux</a>
+- <a href="https://learn.microsoft.com/en-us/virtualization/windowscontainers/quick-start/run-your-first-container">Windows</a> 
+- <a href="https://developer.skao.int/en/latest/howto/docker-vscode.html">VSCode</a>
+- <a href="https://www.jetbrains.com/help/pycharm/docker.html#install_docker">Pycharm</a></p>
+<p>In this version of MMLW, we tested with rabbitmq:3.12.14-management-alpine, but can be used with any version that is less than 2.0.0.
+So type into the terminal:</p>
+<pre><code>docker pull rabbitmq:3.12.14-management-alpine ## pull image_name:image_tag
+</code></pre>
+<p>If you use Docker Desktop, and everything went fine, then the image will appear:</p>
+<p><img alt="Rabbit Docker image appears in Docker Desktop." src="../assets/images/rabbit_image.png" /></p>
+<h2 id="building-images">Building images</h2>
+<p>In case of not being able to access to the prebuild Docker images, we also provide a tutorial on creating these images. DOCKER ENGINE IS REQUIRED!</p>
+<p>First you have to pull the git repository, and then navigate to the "main" branch:</p>
+<pre><code>git pull 
+...
+git checkout main
+</code></pre>
+<p>NOTE: BUILDING THE IMAGES DO NOT REQUIRE A WORKING VIRTUAL ENVIRONMENT!</p>
+<p>Building requires the following Docker command:</p>
+<pre><code>docker build . -t {name}:{tag} -f {filename.dockerfile, preferably in root directory}
+</code></pre>
+<p>If you want to build the images locally:</p>
+<pre><code>docker build . -t mmlw:mlflow -f mlflow.dockerfile
+
+docker build . -t mmlw:frontend -f streamlit_frontend.dockerfile
+
+docker build . -t mmlw:backend -f service.dockerfile
+</code></pre>
+<p>For the first run with build, the backend may take up to 1000s to build this image, which is reduced to ~600s after caching.</p>
+<p>Please do not modify the branch (DO NOT push to branch) -- open a new branch instead, if you modify the code:</p>
+<pre><code>    git branch [--branch_name]
+</code></pre>
+<p>NOTE: The Rabbit image must be pulled for successful start.</p>
+<hr />
+<h2 id="running-docker-images-with-compose">Running Docker images with compose</h2>
+<p>Docker compose <a href="https://docs.docker.com/compose/">[3]</a> starts the application from images and creates a network, through which the applications can communicate.
+It requires a docker-compose.yaml file that specifies the behaviour of the stack.</p>
+<p>The structure is as follows:</p>
+<pre><code>services:
+    service_A : # service name
+        image : A:latest # image-name:tag
+        ports:
+         - 5100:5672 ## will expose local port 
+         # 5672 to global 5100, outside is only reachable from 5100
+        environment:
+         HUB_URL : "http://service_B:8010" ## OS environmental variables
+         # defined in dockerfile
+         ## can refer to service_B IP address as service_B
+        networks:
+         - common_network
+    service_B : 
+        image : B:latest
+        ports:
+         - 8010:8010 # CAN be the same
+        networks:
+         - common_network
+networks: # define existing/nonexisit networks to be used
+# can also be an outside network...
+    common_network: ## name
+        driver: bridge
+        name: common_network # we recommend this to be the same as the key
+</code></pre>
+<p>A docker-compose file is already provided in the GitHub repository (mmlw_template_project branch), and therefore will not be necessary to write out own. For further understanding, please see <a href="https://www.educative.io/blog/docker-compose-tutorial">[5]</a>. Its contents are the following:</p>
+<pre><code>services:
+  rabbit:
+    image: rabbitmq:3.12.14-management-alpine
+    ports:
+      - 5100:5672
+      - 15100:15672
+    networks:
+       - mml_network
+    restart:
+      on-failure
+  mlflow:
+    image: mmlw:mlflow
+    ports:
+      - 5000:5000
+    networks:
+      - mml_network 
+    restart:
+      on-failure
+  backend:
+    image: mmlw:backend
+    ports :
+      - 8010:8010
+    depends_on:
+      rabbit :
+        condition: service_started
+      mlflow :
+        condition: service_started
+    environment:
+      MLFLOW_URI : &quot;http://mlflow:5000&quot;
+      RABBIT_HOST : &quot;rabbit&quot;
+      RABBIT_PORT : &quot;5672&quot;
+      RABBIT_USER : &quot;guest&quot;
+      RABBIT_PASSWORD : &quot;guest&quot;
+    restart:
+      on-failure
+    networks:
+      - mml_network
+
+  frontend:
+    image: mmlw:frontend    
+    ports:
+      - 8501:8501
+    depends_on:
+      backend:
+        condition: service_started
+    environment:
+      HUB_URL : &quot;http://backend:8010&quot;
+    restart:
+      on-failure
+    networks:
+      - mml_network    
+
+
+networks:
+  mml_network:
+    driver: bridge
+    name: mml_network
+
+</code></pre>
+<p>To run the set of applications, type in:</p>
+<pre><code>docker compose up
+</code></pre>
+<p>What you will see in the Desktop app is:</p>
+<p><img alt="compose_desktop" src="../assets/images/compose.png" /></p>
+<hr />
+<h2 id="interfaces">Interfaces</h2>
+<p>If the compose file has not been changed, then the mlflow client can be opened thought a webbrowser:</p>
+<pre><code>http://localhost:5000
+</code></pre>
+<p><img alt="Mlflow UI." src="../assets/images/mlflow_ui.png" /></p>
+<p>The management version enables monitoring though a TCP ip. It is currently set on 15100. The starting username and password is always guest. Open though webbrowser:</p>
+<pre><code>http://localhost:15100
+</code></pre>
+<p><img alt="Rabbit UI." src="../assets/images/rabbit_ui.png" /></p>
+<p>The backend and frontend is also viewable:
+Backend:</p>
+<pre><code>http://localhost:8010/docs
+</code></pre>
+<p><img alt="Backend UI." src="../assets/images/backend_ui.png" />
+Frontend:</p>
+<pre><code>http://localhost:8105
+</code></pre>
+<p><img alt="Frontend UI" src="../assets/images/frontend_ui.png" /></p>
+<p>The frontend will show error if no models are found. DO NOT PANIC! It will work after the first training/loading session.</p>
+<p>If everything opened, then congratulations, you have set up the application with Docker!</p>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="../localdev/" class="btn btn-neutral float-left" title="Local Development"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../client/" class="btn btn-neutral float-right" title="Client Usage and Testing">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+    
+      <span><a href="../localdev/" style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+      <span><a href="../client/" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script src="../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "..";</script>
+    <script src="../js/theme_extra.js"></script>
+    <script src="../js/theme.js"></script>
+      <script src="../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>
