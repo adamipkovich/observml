@@ -69,6 +69,8 @@
               <ul>
                   <li class="toctree-l1"><a class="reference internal" href="../api/">API Reference</a>
                   </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../rest_api/">REST API Reference</a>
+                  </li>
                   <li class="toctree-l1"><a class="reference internal" href="../configuration/">Configuration</a>
                   </li>
                   <li class="toctree-l1"><a class="reference internal" href="../plugin_system/">Plugin System</a>
@@ -114,8 +116,8 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
             <div class="section" itemprop="articleBody">
               
-                <h1 id="containerization-of-mmlw-docker">Containerization of MMLW -- Docker</h1>
-<p>This section will tell the reader how to use the MMLW in production. For starters, you can find .dockerfiles (for mlflow, backend) in the repository, which have to be built first to be used. Docker compose will start the MMLW by launching interconnected microservices with the help of docker compose.</p>
+                <h1 id="containerization-of-observml-docker">Containerization of ObServML -- Docker</h1>
+<p>This section will tell the reader how to use the ObServML in production. For starters, you can find .dockerfiles (for mlflow, backend) in the repository, which have to be built first to be used. Docker compose will start the ObServML by launching interconnected microservices with the help of docker compose.</p>
 <p>The example project contains the docker-compose.yaml and the configuration files we require.</p>
 <hr />
 <h3 id="project-template">Project template</h3>
@@ -131,7 +133,7 @@ Docker is used in terminal, so either cmd, or a python IDE can accomodate. Walkt
 - <a href="https://learn.microsoft.com/en-us/virtualization/windowscontainers/quick-start/run-your-first-container">Windows</a> 
 - <a href="https://developer.skao.int/en/latest/howto/docker-vscode.html">VSCode</a>
 - <a href="https://www.jetbrains.com/help/pycharm/docker.html#install_docker">Pycharm</a></p>
-<p>In this version of MMLW, we tested with rabbitmq:3.12.14-management-alpine, but can be used with any version that is less than 2.0.0.
+<p>In this version of ObServML, we tested with rabbitmq:3.12.14-management-alpine, but can be used with any version that is less than 2.0.0.
 So type into the terminal:</p>
 <pre><code>docker pull rabbitmq:3.12.14-management-alpine ## pull image_name:image_tag
 </code></pre>

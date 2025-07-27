@@ -1,0 +1,909 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <link rel="shortcut icon" href="../img/favicon.ico" />
+    <title>REST API Reference - ObservML</title>
+    <link rel="stylesheet" href="../css/theme.css" />
+    <link rel="stylesheet" href="../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+        <link href="../assets/_mkdocstrings.css" rel="stylesheet" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "REST API Reference";
+        var mkdocs_page_input_path = "rest_api.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href=".." class="icon icon-home"> ObservML
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="..">Home</a>
+                </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Getting Started</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../localdev/">Local Development</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../serve/">Docker Deployment</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../client/">Client Usage and Testing</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Core Components</span></p>
+              <ul class="current">
+                  <li class="toctree-l1"><a class="reference internal" href="../api/">API Reference</a>
+                  </li>
+                  <li class="toctree-l1 current"><a class="reference internal current" href="#">REST API Reference</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#table-of-contents">Table of Contents</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#api-overview">API Overview</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#base-url">Base URL</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#architecture-components">Architecture Components</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#complete-rest-api-reference">Complete REST API Reference</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#framework-architecture">Framework Architecture</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#core-components">Core Components</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#1-experiment-class-abstract-base">1. Experiment Class (Abstract Base)</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#2-dynamic-function-execution">2. Dynamic Function Execution</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#3-experiment-types">3. Experiment Types</a>
+    </li>
+        </ul>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#function-config-mapping">Function-Config Mapping</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#core-framework-functions">Core Framework Functions</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#required-functions-must-be-implemented-by-experiment-types">Required Functions (Must be implemented by experiment types)</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#optional-functions-can-be-included-in-config">Optional Functions (Can be included in config)</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#built-in-functions-always-available">Built-in Functions (Always available)</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#configuration-structure">Configuration Structure</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#parameter-passing">Parameter Passing</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#configuration-driven-workflows">Configuration-Driven Workflows</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#1-training-workflow">1. Training Workflow</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#2-prediction-workflow">2. Prediction Workflow</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#3-configuration-processing">3. Configuration Processing</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#advanced-usage-patterns">Advanced Usage Patterns</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#1-multi-model-training">1. Multi-Model Training</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#2-automated-retraining-pipeline">2. Automated Retraining Pipeline</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#3-custom-function-integration">3. Custom Function Integration</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#4-batch-processing">4. Batch Processing</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#common-error-scenarios">Common Error Scenarios</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#1-configuration-errors">1. Configuration Errors</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#2-experiment-not-found">2. Experiment Not Found</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#3-model-training-failures">3. Model Training Failures</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#4-plugin-health-issues">4. Plugin Health Issues</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#error-recovery-patterns">Error Recovery Patterns</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#client-libraries">Client Libraries</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#observml-python-client">ObServML Python Client</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#python-client-usage">Python Client Usage</a>
+    </li>
+        </ul>
+    </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../configuration/">Configuration</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../plugin_system/">Plugin System</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../plugins/">Plugins</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Framework</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../models/">Models</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../experiments/">Experiments</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../test_results/">Test Results</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Development</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../roadmap/">Roadmap</a>
+                  </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="..">ObservML</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href=".." class="icon icon-home" aria-label="Docs"></a></li>
+          <li class="breadcrumb-item">Core Components</li>
+      <li class="breadcrumb-item active">REST API Reference</li>
+    <li class="wy-breadcrumbs-aside">
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="observml-rest-api-reference">ObServML REST API Reference</h1>
+<p>This comprehensive guide covers the ObServML REST API, framework architecture, and the dynamic configuration-to-function mapping system that powers the platform.</p>
+<h2 id="table-of-contents">Table of Contents</h2>
+<ol>
+<li><a href="#api-overview">API Overview</a></li>
+<li><a href="#complete-rest-api-reference">Complete REST API Reference</a></li>
+<li><a href="#framework-architecture">Framework Architecture</a></li>
+<li><a href="#function-config-mapping">Function-Config Mapping</a></li>
+<li><a href="#configuration-driven-workflows">Configuration-Driven Workflows</a></li>
+<li><a href="#advanced-usage-patterns">Advanced Usage Patterns</a></li>
+<li><a href="#error-handling">Error Handling</a></li>
+<li><a href="#client-libraries">Client Libraries</a></li>
+</ol>
+<h2 id="api-overview">API Overview</h2>
+<p>The ObServML REST API provides a comprehensive interface for managing machine learning experiments through a microservices architecture. Built with FastAPI, it enables:</p>
+<ul>
+<li><strong>Experiment Lifecycle Management</strong>: Create, train, save, load, and delete experiments</li>
+<li><strong>Real-time Predictions</strong>: Make predictions on streaming data via RabbitMQ</li>
+<li><strong>Visualization</strong>: Access plots and EDA figures in JSON format</li>
+<li><strong>MLOps Integration</strong>: Automatic model versioning and tracking with MLflow</li>
+<li><strong>Configuration-Driven Operations</strong>: Dynamic function execution based on YAML configurations</li>
+</ul>
+<h3 id="base-url">Base URL</h3>
+<pre><code>http://localhost:8010
+</code></pre>
+<h3 id="architecture-components">Architecture Components</h3>
+<ul>
+<li><strong>ExperimentHub</strong>: Central orchestrator managing all experiments</li>
+<li><strong>RabbitMQ</strong>: Message broker for data streaming and communication</li>
+<li><strong>MLflow</strong>: Model registry and experiment tracking</li>
+<li><strong>FastAPI</strong>: REST API framework with automatic documentation</li>
+</ul>
+<h2 id="complete-rest-api-reference">Complete REST API Reference</h2>
+<p>The following table presents all available REST API endpoints as documented in the research paper and current implementation:</p>
+<table>
+<thead>
+<tr>
+<th>Endpoint</th>
+<th>HTTP Method</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>/</code></td>
+<td>GET</td>
+<td>Default path. Returns a "Hello World" message</td>
+</tr>
+<tr>
+<td><code>/health</code></td>
+<td>GET</td>
+<td>Check the health of all plugins (MLflow, RabbitMQ)</td>
+</tr>
+<tr>
+<td><code>/available_experiments</code></td>
+<td>GET</td>
+<td>Get available experiment types and their configurations</td>
+</tr>
+<tr>
+<td><code>/flush/{queue}</code></td>
+<td>POST</td>
+<td>Removes all data from the specified RabbitMQ queue</td>
+</tr>
+<tr>
+<td><code>/create_experiment/{name}/{experiment_type}</code></td>
+<td>POST</td>
+<td>Create a new experiment of the specified type</td>
+</tr>
+<tr>
+<td><code>/{name}/train</code></td>
+<td>POST</td>
+<td>Starts training for the specified experiment, setting up the training configuration. Requires data in the Rabbit queue and a configuration file</td>
+</tr>
+<tr>
+<td><code>/{name}/load</code></td>
+<td>POST</td>
+<td>Loads an experiment by its name</td>
+</tr>
+<tr>
+<td><code>/{name}/load/{run_id}</code></td>
+<td>POST</td>
+<td>Loads an experiment using the specified run ID from MLflow</td>
+</tr>
+<tr>
+<td><code>/{name}/save</code></td>
+<td>POST</td>
+<td>Saves the current experiment to the MLflow server</td>
+</tr>
+<tr>
+<td><code>/{name}/predict</code></td>
+<td>POST</td>
+<td>Initiates a prediction call for the specified experiment. Requires a request and data in the RabbitMQ queue {name}</td>
+</tr>
+<tr>
+<td><code>/{name}/retrain</code></td>
+<td>POST</td>
+<td>Starts retraining an experiment as requested</td>
+</tr>
+<tr>
+<td><code>/{name}/stop_training</code></td>
+<td>POST</td>
+<td>Stop the training process for an experiment without removing it</td>
+</tr>
+<tr>
+<td><code>/{name}/delete</code></td>
+<td>POST</td>
+<td>Remove an experiment from memory</td>
+</tr>
+<tr>
+<td><code>/{name}/plot/{plot_name}</code></td>
+<td>GET</td>
+<td>Returns a plot (figure) for the specified experiment and plot name in JSON</td>
+</tr>
+<tr>
+<td><code>/{name}/plot_eda/{plot_name}</code></td>
+<td>GET</td>
+<td>Returns the EDA plot (figure) for the specified experiment and plot name in JSON</td>
+</tr>
+<tr>
+<td><code>/{name}/train_data</code></td>
+<td>GET</td>
+<td>Returns training data for the specified experiment in JSON</td>
+</tr>
+<tr>
+<td><code>/{name}/cfg</code></td>
+<td>GET</td>
+<td>Returns the configuration details of the specified experiment</td>
+</tr>
+<tr>
+<td><code>/experiments</code></td>
+<td>GET</td>
+<td>Lists all experiment names and available figure names</td>
+</tr>
+<tr>
+<td><code>/{name}/run_id</code></td>
+<td>GET</td>
+<td>Returns the run ID (MLflow) of the specified experiment</td>
+</tr>
+<tr>
+<td><code>/{name}/exp_id</code></td>
+<td>GET</td>
+<td>Returns the experiment ID (MLflow) of the specified experiment</td>
+</tr>
+</tbody>
+</table>
+<h2 id="framework-architecture">Framework Architecture</h2>
+<p>ObServML uses a <strong>configuration-driven architecture</strong> where YAML configuration files dynamically control experiment behavior. The core principle is:</p>
+<blockquote>
+<p><strong>Each YAML configuration key corresponds to a method in the Experiment class</strong></p>
+</blockquote>
+<h3 id="core-components">Core Components</h3>
+<h4 id="1-experiment-class-abstract-base">1. Experiment Class (Abstract Base)</h4>
+<p>The <code>Experiment</code> class serves as the foundation for all experiment types:</p>
+<pre><code class="language-python">class Experiment(Protocol):
+    &quot;&quot;&quot;Abstract base class for all experiments&quot;&quot;&quot;
+
+    # Core attributes
+    model: any = None
+    data: pd.DataFrame = None
+    cfg: dict = None
+    _model_registry: dict[str, type] = dict()
+    _report_registry: dict[str, go.Figure] = dict()
+    _eda_registry: dict[str, go.Figure] = dict()
+
+    # MLflow integration
+    run_id: str = None
+    experiment_id: str = None
+    mlflow_uri: str = None
+</code></pre>
+<h4 id="2-dynamic-function-execution">2. Dynamic Function Execution</h4>
+<p>The <code>run()</code> method implements the core configuration-to-function mapping:</p>
+<pre><code class="language-python">def run(self, data: pd.DataFrame) -&gt; None:
+    &quot;&quot;&quot;Dynamically execute functions based on configuration keys&quot;&quot;&quot;
+
+    # Extract function names from config (excluding load_object)
+    funcs = list(self.cfg.keys())
+    funcs.remove(&quot;load_object&quot;)
+
+    self.data = data
+    for k in funcs:
+        if k == &quot;setup&quot;:
+            self.setup(data)
+        else:
+            # Dynamic function call using getattr
+            getattr(self, k)()
+</code></pre>
+<h4 id="3-experiment-types">3. Experiment Types</h4>
+<p>ObServML provides four main experiment types, each inheriting from the base <code>Experiment</code> class:</p>
+<ul>
+<li><strong>TimeSeriesAnalysis</strong>: For forecasting and temporal anomaly detection</li>
+<li><strong>FaultDetection</strong>: For unsupervised anomaly detection</li>
+<li><strong>FaultIsolation</strong>: For supervised classification and root cause analysis</li>
+<li><strong>ProcessMining</strong>: For workflow and sequence analysis</li>
+</ul>
+<h2 id="function-config-mapping">Function-Config Mapping</h2>
+<p>The configuration-to-function mapping system enables dynamic experiment execution without code changes. Here's how it works:</p>
+<h3 id="core-framework-functions">Core Framework Functions</h3>
+<h4 id="required-functions-must-be-implemented-by-experiment-types">Required Functions (Must be implemented by experiment types)</h4>
+<table>
+<thead>
+<tr>
+<th>Function</th>
+<th>Config Key</th>
+<th>Purpose</th>
+<th>Parameters</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>setup()</code></td>
+<td><code>setup</code></td>
+<td>Data preparation and experiment initialization</td>
+<td><code>data: pd.DataFrame, **kwargs</code></td>
+</tr>
+<tr>
+<td><code>create_model()</code></td>
+<td><code>create_model</code></td>
+<td>Model training and configuration</td>
+<td><code>**kwargs</code></td>
+</tr>
+<tr>
+<td><code>predict()</code></td>
+<td><code>predict</code></td>
+<td>Prediction on new data</td>
+<td><code>data: pd.DataFrame, **kwargs</code></td>
+</tr>
+<tr>
+<td><code>_score()</code></td>
+<td>N/A</td>
+<td>Calculate model metrics</td>
+<td><code>y, y_hat</code></td>
+</tr>
+</tbody>
+</table>
+<h4 id="optional-functions-can-be-included-in-config">Optional Functions (Can be included in config)</h4>
+<table>
+<thead>
+<tr>
+<th>Function</th>
+<th>Config Key</th>
+<th>Purpose</th>
+<th>Parameters</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>eda()</code></td>
+<td><code>eda</code></td>
+<td>Exploratory data analysis</td>
+<td>None</td>
+</tr>
+<tr>
+<td><code>retrain()</code></td>
+<td><code>retrain</code></td>
+<td>Model retraining logic</td>
+<td>None</td>
+</tr>
+<tr>
+<td><code>format_data()</code></td>
+<td><code>format</code></td>
+<td>Custom data formatting</td>
+<td><code>data, format: dict</code></td>
+</tr>
+</tbody>
+</table>
+<h4 id="built-in-functions-always-available">Built-in Functions (Always available)</h4>
+<table>
+<thead>
+<tr>
+<th>Function</th>
+<th>Purpose</th>
+<th>Usage</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>save()</code></td>
+<td>Save experiment to MLflow</td>
+<td>Called via API endpoint</td>
+</tr>
+<tr>
+<td><code>load()</code></td>
+<td>Load experiment from MLflow</td>
+<td>Called via API endpoint</td>
+</tr>
+<tr>
+<td><code>plot_model()</code></td>
+<td>Retrieve model visualizations</td>
+<td>Called via API endpoint</td>
+</tr>
+<tr>
+<td><code>export()</code></td>
+<td>Export reports as HTML</td>
+<td>Called internally</td>
+</tr>
+<tr>
+<td><code>join_data()</code></td>
+<td>Combine training and new data</td>
+<td>Called during retraining</td>
+</tr>
+</tbody>
+</table>
+<h3 id="configuration-structure">Configuration Structure</h3>
+<p>Every experiment configuration follows this structure:</p>
+<pre><code class="language-yaml">load_object:
+  module: framework.{ExperimentType}    # Python module path
+  name: {ExperimentType}Experiment      # Class name
+
+setup:                                  # Maps to setup() function
+  datetime_column: &quot;timestamp&quot;
+  target: &quot;target_variable&quot;
+  # Additional setup parameters...
+
+eda:                                    # Maps to eda() function
+  # EDA configuration (empty = use defaults)
+
+create_model:                           # Maps to create_model() function
+  model: &quot;model_name&quot;
+  params:
+    # Model-specific parameters
+
+# Additional custom functions can be added
+custom_preprocessing:                   # Maps to custom_preprocessing() function
+  param1: value1
+  param2: value2
+</code></pre>
+<h3 id="parameter-passing">Parameter Passing</h3>
+<p>Parameters from the configuration are passed to functions using Python's <code>**kwargs</code> mechanism:</p>
+<pre><code class="language-python"># Configuration
+setup:
+  datetime_column: &quot;timestamp&quot;
+  target: &quot;value&quot;
+  predict_window: 1000
+
+# Function call (automatically generated)
+self.setup(data, datetime_column=&quot;timestamp&quot;, target=&quot;value&quot;, predict_window=1000)
+</code></pre>
+<h2 id="configuration-driven-workflows">Configuration-Driven Workflows</h2>
+<h3 id="1-training-workflow">1. Training Workflow</h3>
+<pre><code class="language-mermaid">graph TD
+    A[POST /{name}/train] --&gt; B[Parse Configuration]
+    B --&gt; C[Create Experiment Instance]
+    C --&gt; D[Load Data from RabbitMQ]
+    D --&gt; E[Execute run() method]
+    E --&gt; F[Dynamic Function Calls]
+    F --&gt; G[setup()]
+    F --&gt; H[eda()]
+    F --&gt; I[create_model()]
+    I --&gt; J[Save to MLflow]
+    J --&gt; K[Return Response]
+</code></pre>
+<h3 id="2-prediction-workflow">2. Prediction Workflow</h3>
+<pre><code class="language-mermaid">graph TD
+    A[POST /{name}/predict] --&gt; B[Load Experiment]
+    B --&gt; C[Get Data from RabbitMQ]
+    C --&gt; D[Call predict() method]
+    D --&gt; E[Update Visualizations]
+    E --&gt; F[Return Results]
+</code></pre>
+<h3 id="3-configuration-processing">3. Configuration Processing</h3>
+<p>When a training request is received:</p>
+<ol>
+<li><strong>Configuration Parsing</strong>: YAML config is loaded and validated</li>
+<li><strong>Dynamic Import</strong>: Experiment class is loaded using <code>load_object</code> specification</li>
+<li><strong>Instance Creation</strong>: Experiment instance is created with config</li>
+<li><strong>Function Mapping</strong>: Config keys are mapped to class methods</li>
+<li><strong>Sequential Execution</strong>: Functions are called in order based on config structure</li>
+</ol>
+<h2 id="advanced-usage-patterns">Advanced Usage Patterns</h2>
+<h3 id="1-multi-model-training">1. Multi-Model Training</h3>
+<p>NOTE: YOu must have sent a data already on rabbit before the Curl can properly start the training process.
+Train multiple models with different configurations:</p>
+<pre><code class="language-bash"># Train Isolation Forest
+curl -X POST &quot;http://localhost:8010/pump_iforest/train&quot; \
+  -H &quot;Content-Type: application/json&quot; \
+  -d '{
+    &quot;load_object&quot;: {
+      &quot;module&quot;: &quot;framework.FaultDetection&quot;,
+      &quot;name&quot;: &quot;FaultDetectionExperiment&quot;
+    },
+    &quot;setup&quot;: {&quot;datetime_column&quot;: &quot;ds&quot;},
+    &quot;eda&quot;: {},
+    &quot;create_model&quot;: {
+      &quot;model&quot;: &quot;iforest&quot;,
+      &quot;params&quot;: {&quot;n_estimators&quot;: 100, &quot;contamination&quot;: &quot;auto&quot;}
+    }
+  }'
+
+# Train PCA model
+curl -X POST &quot;http://localhost:8010/pump_pca/train&quot; \
+  -H &quot;Content-Type: application/json&quot; \
+  -d '{
+    &quot;load_object&quot;: {
+      &quot;module&quot;: &quot;framework.FaultDetection&quot;, 
+      &quot;name&quot;: &quot;FaultDetectionExperiment&quot;
+    },
+    &quot;setup&quot;: {&quot;datetime_column&quot;: &quot;ds&quot;},
+    &quot;create_model&quot;: {
+      &quot;model&quot;: &quot;pca&quot;,
+      &quot;params&quot;: {&quot;n_components&quot;: 0.95, &quot;alpha&quot;: 0.05}
+    }
+  }'
+</code></pre>
+<h3 id="2-automated-retraining-pipeline">2. Automated Retraining Pipeline</h3>
+<p>Configure automatic retraining based on performance metrics:</p>
+<pre><code class="language-yaml">setup:
+  datetime_column: &quot;ds&quot;
+  target: &quot;fault_type&quot;
+  retrain:
+    retrain_window: 5000
+    metric: &quot;Accuracy&quot;
+    metric_threshold: 0.85
+    higher_better: true
+
+create_model:
+  model: &quot;dt&quot;
+  params: {}
+</code></pre>
+<h3 id="3-custom-function-integration">3. Custom Function Integration</h3>
+<p>Add custom preprocessing functions:</p>
+<pre><code class="language-yaml">load_object:
+  module: framework.FaultIsolation
+  name: FaultIsolationExperiment
+
+setup:
+  datetime_column: &quot;ds&quot;
+  target: &quot;output&quot;
+
+custom_preprocessing:          # Custom function
+  normalize: true
+  remove_outliers: true
+  outlier_threshold: 3
+
+eda:
+
+create_model:
+  model: &quot;rf&quot;
+  params:
+    n_estimators: 100
+</code></pre>
+<h3 id="4-batch-processing">4. Batch Processing</h3>
+<p>Process multiple experiments in sequence:</p>
+<pre><code class="language-bash">#!/bin/bash
+# Batch training script
+
+experiments=(&quot;pump_iforest&quot; &quot;pump_pca&quot; &quot;pump_dbscan&quot;)
+models=(&quot;iforest&quot; &quot;pca&quot; &quot;dbscan&quot;)
+
+for i in &quot;${!experiments[@]}&quot;; do
+  echo &quot;Training ${experiments[$i]} with ${models[$i]}&quot;
+
+  curl -X POST &quot;http://localhost:8010/${experiments[$i]}/train&quot; \
+    -H &quot;Content-Type: application/json&quot; \
+    -d @configs/pump/${models[$i]}.yaml
+
+  # Wait for training to complete
+  sleep 30
+
+  # Make initial prediction
+  curl -X POST &quot;http://localhost:8010/${experiments[$i]}/predict&quot;
+done
+</code></pre>
+<h3 id="common-error-scenarios">Common Error Scenarios</h3>
+<h4 id="1-configuration-errors">1. Configuration Errors</h4>
+<pre><code class="language-json">{
+  &quot;detail&quot;: &quot;Configuration validation failed: missing required field 'target'&quot;
+}
+</code></pre>
+<p><strong>Solution</strong>: Ensure all required configuration fields are present.</p>
+<h4 id="2-experiment-not-found">2. Experiment Not Found</h4>
+<pre><code class="language-json">{
+  &quot;detail&quot;: &quot;Experiment 'nonexistent_model' not found&quot;
+}
+</code></pre>
+<p><strong>Solution</strong>: Check experiment name and ensure it has been created/loaded.</p>
+<h4 id="3-model-training-failures">3. Model Training Failures</h4>
+<pre><code class="language-json">{
+  &quot;detail&quot;: &quot;Model training failed: insufficient data&quot;
+}
+</code></pre>
+<p><strong>Solution</strong>: Verify data is available in RabbitMQ queue and meets model requirements.</p>
+<h4 id="4-plugin-health-issues">4. Plugin Health Issues</h4>
+<pre><code class="language-json">{
+  &quot;mlops&quot;: {
+    &quot;healthy&quot;: false,
+    &quot;details&quot;: {
+      &quot;error&quot;: &quot;Connection refused to MLflow server&quot;
+    }
+  }
+}
+</code></pre>
+<p><strong>Solution</strong>: Check MLflow server status and connectivity.</p>
+<h3 id="error-recovery-patterns">Error Recovery Patterns</h3>
+<pre><code class="language-python">def robust_api_call(url, max_retries=3, backoff_factor=2):
+    &quot;&quot;&quot;Make API calls with retry logic&quot;&quot;&quot;
+    for attempt in range(max_retries):
+        try:
+            response = requests.post(url, timeout=30)
+            response.raise_for_status()
+            return response
+        except requests.exceptions.RequestException as e:
+            if attempt == max_retries - 1:
+                raise e
+            wait_time = backoff_factor ** attempt
+            print(f&quot;Attempt {attempt + 1} failed, retrying in {wait_time}s...&quot;)
+            time.sleep(wait_time)
+</code></pre>
+<h2 id="client-libraries">Client Libraries</h2>
+<h3 id="observml-python-client">ObServML Python Client</h3>
+<p>The <strong>ObServML Python Client</strong> is available as <code>observml_client.py</code> in the project root directory. This comprehensive client combines the functionality from <code>api_commands.py</code> with enhanced error handling, type hints, and modern Python practices.</p>
+<p><strong>Key Features:</strong>
+- <strong>Enhanced Error Handling</strong>: Automatic retry logic with exponential backoff
+- <strong>Type Hints</strong>: Full type annotations for better IDE support
+- <strong>RabbitMQ Integration</strong>: Automatic data posting to message queues
+- <strong>File Format Support</strong>: Load data from .xlsx, .csv, .json, .pkl files
+- <strong>Backward Compatibility</strong>: Legacy functions for existing code
+- <strong>Comprehensive Logging</strong>: Built-in logging for debugging
+- <strong>Monitoring Support</strong>: Continuous experiment monitoring capabilities</p>
+<p><strong>Installation:</strong></p>
+<pre><code class="language-python"># Import the client
+from observml_client import ObServMLClient
+
+# Or use legacy functions for backward compatibility
+from observml_client import train, predict, load_experiment
+</code></pre>
+<h3 id="python-client-usage">Python Client Usage</h3>
+<pre><code class="language-python">import requests
+import json
+from typing import Dict, Any, Optional
+
+class ObServMLClient:
+    &quot;&quot;&quot;Comprehensive Python client for ObServML API&quot;&quot;&quot;
+
+    def __init__(self, base_url: str = &quot;http://localhost:8010&quot;):
+        self.base_url = base_url.rstrip('/')
+
+    def health_check(self) -&gt; Dict[str, Any]:
+        &quot;&quot;&quot;Check system health&quot;&quot;&quot;
+        response = requests.get(f&quot;{self.base_url}/health&quot;)
+        response.raise_for_status()
+        return response.json()
+
+    def get_available_experiments(self) -&gt; Dict[str, Any]:
+        &quot;&quot;&quot;Get available experiment types&quot;&quot;&quot;
+        response = requests.get(f&quot;{self.base_url}/available_experiments&quot;)
+        response.raise_for_status()
+        return response.json()
+
+    def create_experiment(self, name: str, experiment_type: str, config: Dict[str, Any]) -&gt; Dict[str, Any]:
+        &quot;&quot;&quot;Create a new experiment&quot;&quot;&quot;
+        response = requests.post(
+            f&quot;{self.base_url}/create_experiment/{name}/{experiment_type}&quot;,
+            json=config
+        )
+        response.raise_for_status()
+        return response.json()
+
+    def train_experiment(self, name: str, config: Dict[str, Any]) -&gt; str:
+        &quot;&quot;&quot;Train an experiment&quot;&quot;&quot;
+        response = requests.post(f&quot;{self.base_url}/{name}/train&quot;, json=config)
+        response.raise_for_status()
+        return response.text
+
+    def predict(self, name: str) -&gt; str:
+        &quot;&quot;&quot;Make predictions&quot;&quot;&quot;
+        response = requests.post(f&quot;{self.base_url}/{name}/predict&quot;)
+        response.raise_for_status()
+        return response.text
+
+    def load_experiment(self, name: str, run_id: Optional[str] = None) -&gt; str:
+        &quot;&quot;&quot;Load an experiment&quot;&quot;&quot;
+        if run_id:
+            url = f&quot;{self.base_url}/{name}/load/{run_id}&quot;
+        else:
+            url = f&quot;{self.base_url}/{name}/load&quot;
+
+        response = requests.post(url)
+        response.raise_for_status()
+        return response.text
+
+    def save_experiment(self, name: str) -&gt; str:
+        &quot;&quot;&quot;Save an experiment&quot;&quot;&quot;
+        response = requests.post(f&quot;{self.base_url}/{name}/save&quot;)
+        response.raise_for_status()
+        return response.text
+
+    def get_plot(self, name: str, plot_name: str) -&gt; Dict[str, Any]:
+        &quot;&quot;&quot;Get a plot from an experiment&quot;&quot;&quot;
+        response = requests.get(f&quot;{self.base_url}/{name}/plot/{plot_name}&quot;)
+        response.raise_for_status()
+        return response.json()
+
+    def get_eda_plot(self, name: str, plot_name: str) -&gt; Dict[str, Any]:
+        &quot;&quot;&quot;Get an EDA plot from an experiment&quot;&quot;&quot;
+        response = requests.get(f&quot;{self.base_url}/{name}/plot_eda/{plot_name}&quot;)
+        response.raise_for_status()
+        return response.json()
+
+    def get_configuration(self, name: str) -&gt; Dict[str, Any]:
+        &quot;&quot;&quot;Get experiment configuration&quot;&quot;&quot;
+        response = requests.get(f&quot;{self.base_url}/{name}/cfg&quot;)
+        response.raise_for_status()
+        return response.json()
+
+    def get_experiments(self) -&gt; Dict[str, Any]:
+        &quot;&quot;&quot;Get all experiments and their available plots&quot;&quot;&quot;
+        response = requests.get(f&quot;{self.base_url}/experiments&quot;)
+        response.raise_for_status()
+        return response.json()
+
+    def flush_queue(self, queue_name: str) -&gt; str:
+        &quot;&quot;&quot;Flush a RabbitMQ queue&quot;&quot;&quot;
+        response = requests.post(f&quot;{self.base_url}/flush/{queue_name}&quot;)
+        response.raise_for_status()
+        return response.text
+
+    def retrain_experiment(self, name: str) -&gt; str:
+        &quot;&quot;&quot;Retrain an experiment&quot;&quot;&quot;
+        response = requests.post(f&quot;{self.base_url}/{name}/retrain&quot;)
+        response.raise_for_status()
+        return response.text
+
+    def delete_experiment(self, name: str) -&gt; Dict[str, Any]:
+        &quot;&quot;&quot;Delete an experiment from memory&quot;&quot;&quot;
+        response = requests.post(f&quot;{self.base_url}/{name}/delete&quot;)
+        response.raise_for_status()
+        return response.json()
+
+# Usage example
+client = ObServMLClient()
+
+# Check system health
+health = client.health_check()
+print(f&quot;System health: {json.dumps(health, indent=2)}&quot;)
+
+# Create and train a fault detection experiment
+config = {
+    &quot;load_object&quot;: {
+        &quot;module&quot;: &quot;framework.FaultDetection&quot;,
+        &quot;name&quot;: &quot;FaultDetectionExperiment&quot;
+    },
+    &quot;setup&quot;: {
+        &quot;datetime_column&quot;: &quot;ds&quot;
+    },
+    &quot;eda&quot;: {},
+    &quot;create_model&quot;: {
+        &quot;model&quot;: &quot;iforest&quot;,
+        &quot;params&quot;: {
+            &quot;n_estimators&quot;: 100,
+            &quot;contamination&quot;: &quot;auto&quot;
+        }
+    }
+}
+
+result = client.train_experiment(&quot;pump_anomaly&quot;, config)
+print(f&quot;Training result: {result}&quot;)
+
+# Make predictions
+prediction = client.predict(&quot;pump_anomaly&quot;)
+print(f&quot;Prediction result: {prediction}&quot;)
+
+# Get anomaly plot
+plot = client.get_plot(&quot;pump_anomaly&quot;, &quot;outliers&quot;)
+print(f&quot;Plot keys: {list(plot.keys())}&quot;)
+</code></pre>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="../api/" class="btn btn-neutral float-left" title="API Reference"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../configuration/" class="btn btn-neutral float-right" title="Configuration">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+    
+      <span><a href="../api/" style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+      <span><a href="../configuration/" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script src="../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "..";</script>
+    <script src="../js/theme_extra.js"></script>
+    <script src="../js/theme.js"></script>
+      <script src="../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>

@@ -57,6 +57,8 @@
               <ul>
                   <li class="toctree-l1"><a class="reference internal" href="../api/">API Reference</a>
                   </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../rest_api/">REST API Reference</a>
+                  </li>
                   <li class="toctree-l1"><a class="reference internal" href="../configuration/">Configuration</a>
                   </li>
                   <li class="toctree-l1"><a class="reference internal" href="../plugin_system/">Plugin System</a>
@@ -68,61 +70,95 @@
               <ul class="current">
                   <li class="toctree-l1 current"><a class="reference internal current" href="#">Models</a>
     <ul class="current">
-    <li class="toctree-l2"><a class="reference internal" href="#fault-isolation">Fault Isolation</a>
-        <ul>
-    <li class="toctree-l3"><a class="reference internal" href="#decision-tree">Decision Tree</a>
-    </li>
-    <li class="toctree-l3"><a class="reference internal" href="#randomforest">RandomForest</a>
-    </li>
-    <li class="toctree-l3"><a class="reference internal" href="#naivebayes">NaiveBayes</a>
-    </li>
-    <li class="toctree-l3"><a class="reference internal" href="#hidden-markov-models">Hidden Markov Models</a>
-    </li>
-    <li class="toctree-l3"><a class="reference internal" href="#bayes-network">Bayes Network</a>
-    </li>
-    <li class="toctree-l3"><a class="reference internal" href="#markov-chain">Markov Chain</a>
-    </li>
-    <li class="toctree-l3"><a class="reference internal" href="#fault-isolation-bugs">Fault Isolation Bugs</a>
-    </li>
-        </ul>
+    <li class="toctree-l2"><a class="reference internal" href="#configuration-structure">Configuration Structure</a>
     </li>
     <li class="toctree-l2"><a class="reference internal" href="#time-series-analysis">Time Series Analysis</a>
         <ul>
-    <li class="toctree-l3"><a class="reference internal" href="#arima-sarima">ARIMA + SARIMA</a>
+    <li class="toctree-l3"><a class="reference internal" href="#prophet">Prophet</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#autoencoder">Autoencoder</a>
-    </li>
-    <li class="toctree-l3"><a class="reference internal" href="#exponential-smoothing">Exponential Smoothing</a>
+    <li class="toctree-l3"><a class="reference internal" href="#arimasarima">ARIMA/SARIMA</a>
     </li>
     <li class="toctree-l3"><a class="reference internal" href="#lstm">LSTM</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#prophet">Prophet</a>
+    <li class="toctree-l3"><a class="reference internal" href="#autoencoder">Autoencoder</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#ssa">SSA</a>
+    <li class="toctree-l3"><a class="reference internal" href="#ssa-singular-spectrum-analysis">SSA (Singular Spectrum Analysis)</a>
     </li>
         </ul>
     </li>
     <li class="toctree-l2"><a class="reference internal" href="#fault-detection">Fault Detection</a>
         <ul>
-    <li class="toctree-l3"><a class="reference internal" href="#pca">PCA</a>
+    <li class="toctree-l3"><a class="reference internal" href="#isolation-forest">Isolation Forest</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#pca-principal-component-analysis">PCA (Principal Component Analysis)</a>
     </li>
     <li class="toctree-l3"><a class="reference internal" href="#dbscan">DBSCAN</a>
     </li>
     <li class="toctree-l3"><a class="reference internal" href="#elliptic-envelope">Elliptic Envelope</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#isolation-forest">Isolation Forest</a>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#fault-isolation">Fault Isolation</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#decision-tree">Decision Tree</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#random-forest">Random Forest</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#naive-bayes">Naive Bayes</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#hidden-markov-models-hmm">Hidden Markov Models (HMM)</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#bayesian-network">Bayesian Network</a>
     </li>
         </ul>
     </li>
     <li class="toctree-l2"><a class="reference internal" href="#process-mining">Process Mining</a>
         <ul>
-    <li class="toctree-l3"><a class="reference internal" href="#heuristicsminer">HeuristicsMiner</a>
+    <li class="toctree-l3"><a class="reference internal" href="#heuristics-miner">Heuristics Miner</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#topkrules">TopKRules</a>
+    <li class="toctree-l3"><a class="reference internal" href="#apriori-association-rules">Apriori Association Rules</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#apriori-association-rules">Apriori association rules</a>
+    <li class="toctree-l3"><a class="reference internal" href="#topk-rules">TopK Rules</a>
     </li>
     <li class="toctree-l3"><a class="reference internal" href="#cmspam">CMSPAM</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#advanced-configuration-options">Advanced Configuration Options</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#automatic-retraining">Automatic Retraining</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#data-formatting">Data Formatting</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#prediction-windows">Prediction Windows</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#rest-api-patterns">REST API Patterns</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#common-endpoints">Common Endpoints</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#batch-processing-example">Batch Processing Example</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#model-selection-guidelines">Model Selection Guidelines</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#time-series-analysis_1">Time Series Analysis</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#fault-detection_1">Fault Detection</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#fault-isolation_1">Fault Isolation</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#process-mining_1">Process Mining</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#troubleshooting">Troubleshooting</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#common-issues">Common Issues</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#performance-optimization">Performance Optimization</a>
     </li>
         </ul>
     </li>
@@ -162,360 +198,586 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
             <div class="section" itemprop="articleBody">
               
-                <h1 id="models">Models</h1>
-<p>This section contains example .yaml files for models.
-Note: ${} means that it should be replaced with a relevant value</p>
-<h2 id="fault-isolation">Fault Isolation</h2>
-<pre><code>Classification models
-</code></pre>
-<h3 id="decision-tree">Decision Tree</h3>
-<pre><code>load_object :
-  module: framework.FaultIsolation
-  name: FaultIsolationExperiment
+                <h1 id="models-and-configuration-guide">Models and Configuration Guide</h1>
+<p>This section provides comprehensive examples of machine learning models available in ObServML, organized by experiment type. Each model includes practical configuration examples from real use cases, REST API usage patterns, and parameter explanations.</p>
+<p>ObServML supports four main experiment types:
+- <strong>Time Series Analysis</strong>: Forecasting and anomaly detection in temporal data
+- <strong>Fault Detection</strong>: Unsupervised anomaly detection in sensor data
+- <strong>Fault Isolation</strong>: Supervised classification for root cause analysis
+- <strong>Process Mining</strong>: Analysis of sequential processes and workflows</p>
+<h2 id="configuration-structure">Configuration Structure</h2>
+<p>All models follow a consistent YAML configuration structure:</p>
+<pre><code class="language-yaml">load_object:
+  module: framework.{ExperimentType}
+  name: {ExperimentType}Experiment
 setup:
-    datetime_column : ${ds} #-&gt; datetime changes with dataset
-    target : ${target} # -&gt; target column name changes with dataset
-eda:
-create_model :
-    model : &quot;dt&quot; 
-    params:
-
+  datetime_column: &quot;timestamp&quot;  # Column containing timestamps
+  target: &quot;target_variable&quot;     # Target variable (for supervised learning)
+  # Additional setup parameters...
+eda:  # Optional: Exploratory Data Analysis
+create_model:
+  model: &quot;model_name&quot;
+  params:
+    # Model-specific parameters
 </code></pre>
-<h3 id="randomforest">RandomForest</h3>
-<pre><code>load_object :
-  module: framework.FaultIsolation
-  name: FaultIsolationExperiment
-setup:
-    datetime_column : ${ds} #-&gt; datetime changes with dataset
-    target : ${target} # -&gt; target column name changes with dataset
-eda:
-create_model :
-    model : &quot;rf&quot; 
-    params:
-</code></pre>
-<h3 id="naivebayes">NaiveBayes</h3>
-<pre><code>load_object :
-  module: framework.FaultIsolation
-  name: FaultIsolationExperiment
-setup:
-    datetime_column : ${ds} #-&gt; datetime changes with dataset
-    target : ${target} # -&gt; target column name changes with dataset
-eda:
-create_model :
-    model : &quot;nb&quot;
-    params:
-</code></pre>
-<h3 id="hidden-markov-models">Hidden Markov Models</h3>
-<pre><code>load_object :
-  module: framework.FaultIsolation
-  name: FaultIsolationExperiment
-setup:
-    datetime_column : ${ds} #-&gt; datetime changes with dataset
-    target : ${target} # -&gt; target column name changes with dataset
-eda:
-create_model :
-    model : &quot;hmm&quot; 
-    params:
-      n_iter : 1000 # how many iterations
-      covariance_type : &quot;diag&quot;
-      n_mix: 10 #
-</code></pre>
-<h3 id="bayes-network">Bayes Network</h3>
-<pre><code>load_object :
-  module: framework.FaultIsolation
-  name: FaultIsolationExperiment
-setup:
-    datetime_column : ${ds} #-&gt; datetime changes with dataset
-    target : ${target} # -&gt; target column name changes with dataset
-eda:
-create_model :
-    model : &quot;bn&quot; # Random Forest
-    params: 
-      learningMethod : 'MIIC'
-      prior : 'Smoothing'
-      priorWeight : 1
-      discretizationNbBins : 30 #'elbowMethod',
-      discretizationStrategy : &quot;quantile&quot; #&quot;quantile&quot;, &quot;uniform&quot;, &quot;kmeans&quot;, &quot;NML&quot;, &quot;CAIM&quot; and &quot;MDLP&quot;
-      discretizationThreshold : 0.01
-      usePR : False
-</code></pre>
-<p>For furter information on the parameters, please see the <a href="https://pyagrum.readthedocs.io/en/latest/skbnClassifier.html">link</a>
-NOTE: This model's predict cannot be used without target variable. 
-Originally this model would have been used with autoML, but the package continously referenced a null-pointer, and so were omitted.</p>
-<h3 id="markov-chain">Markov Chain</h3>
-<pre><code>load_object :
-  module: framework.FaultIsolation
-  name: FaultIsolationExperiment
-setup:
-    datetime_column : ${ds} #-&gt; datetime changes with dataset
-    target : ${target} # -&gt; target column name changes with dataset
-eda:
-create_model :
-    model : &quot;mc&quot; 
-    params: 
-</code></pre>
-<h3 id="fault-isolation-bugs">Fault Isolation Bugs</h3>
-<ul>
-<li>BayesNet fails if not started locally (cannot find pyAgrum in Docker)</li>
-</ul>
 <h2 id="time-series-analysis">Time Series Analysis</h2>
-<h3 id="arima-sarima">ARIMA + SARIMA</h3>
-<pre><code>load_object :
-  module: framework.TimeSeriesAnalysis
-  name:  TimeSeriesAnomalyExperiment
-setup: 
-    ds : ${ds} #-&gt; datetime changes with dataset
-    target : ${y} # -&gt; time series column name, changes with dataset
-eda:    ## generating EDA, can be removed
-create_model :
-    model : &quot;arima&quot;
-    params:  
-      start_p : 10 #  start value for p
-      d : #differencing order
-      start_q : 10 #start value for q
-      max_p : 100 # max value for p
-      max_q : 100 # max value for p
-      seasonal : False
-      threshold_for_anomaly : 3 #threshold for anomaly detection
-</code></pre>
-<h3 id="autoencoder">Autoencoder</h3>
-<pre><code>load_object :
-  module: framework.TimeSeriesAnalysis
-  name:  TimeSeriesAnomalyExperiment
-setup: 
-    ds : ${ds} #-&gt; datetime changes with dataset
-    target : ${y} # -&gt; time series column name, changes with dataset
-eda:
-create_model :
-    model : &quot;ae&quot;
-    params:
-      layer_no : 6 # number of layers
-      window : 250 # moving window size
-      epoch_no : 10 ## how many times?
-      batch_size : 64 ## 
-      shuffle : False ## Shuffle data
-      threshold_for_anomaly : 3
-      neuron_no_enc : [30, 25, 20, 15, 10,5] # number of cells in encoder part
-      # - must be as much integers as layers
-      neuron_no_dec : [5,10, 15, 20, 25, 30] # number of cells in decoder part
-      # - must be as much integers as layers
-      act_enc : 'relu' # layer type for cells in encoder (Rectified Linear Unit activation)
-      act_dec : 'relu' # layer type for cells in decoder 
-</code></pre>
-<h3 id="exponential-smoothing">Exponential Smoothing</h3>
-<pre><code>load_object :
-  module: framework.TimeSeriesAnalysis
-  name:  TimeSeriesAnomalyExperiment
-setup: 
-    ds : ${ds} #-&gt; datetime changes with dataset
-    target : ${y} # -&gt; time series column name, changes with dataset
-eda:
-create_model :
-    model : &quot;es&quot;
-    params:
-      trend : &quot;mul&quot; # determining the trend -multiplication/addition type
-      seasonal :  # use seasonal analysis
-      seasonal_periods :  # ...
-      threshold_for_anomaly : 2.5 
-      freq :  # day, hour, year, by general notation (&quot;D&quot;, )
-</code></pre>
-<p>Parameters (add to params): </p>
-<ul>
-<li>trend : str (default = None) Type of trend component.</li>
-<li>damped_trend : bool (default = False) Should the trend component be damped.</li>
-<li>seasonal : str (default = None) Type of seasonal component.</li>
-<li>seasonal_periods : int (default = None)
-The number of periods in a complete seasonal cycle, e.g., 4 for quarterly data or 7 for daily data with a weekly cycle.</li>
-<li>freq : str (default = None)
-Frequency of the time series. A Pandas offset or 'B', 'D', 'W', 'M', 'A', or 'Q'.</li>
-<li>threshold_for_anomaly : float (default = 3) Threshold for anomaly detection.</li>
-</ul>
-<h3 id="lstm">LSTM</h3>
-<pre><code>load_object :
-  module: framework.TimeSeriesAnalysis
-  name:  TimeSeriesAnomalyExperiment
-setup: 
-    ds : ${ds} #-&gt; datetime changes with dataset
-    target : ${y} # -&gt; time series column name, changes with dataset
-eda:
-create_model :
-    model : &quot;lstm&quot; # Random Forest
-    params:
-</code></pre>
-<p>Parameters (add to params): </p>
-<ul>
-<li>seq_length : int
-                Length of the sequence.</li>
-<li>target_var : str
-                Name of the target variable.</li>
-<li>layer_no : int (default = 1)
-                Number of LSTM layers.</li>
-<li>cell_no : int (default = 1)
-                Number of cells in LSTM layer.</li>
-<li>epoch_no : int (default = 100)
-                Number of epochs.</li>
-<li>batch_size : int (default = 32)
-                Batch size.</li>
-<li>shuffle : bool (default = True)
-                Shuffle data.</li>
-<li>patience : int (default = 10)
-                Number of epochs with no improvement after which training will be stopped.</li>
-<li>threshold_for_anomaly : float (default = 3)
-                Threshold for anomaly detection.</li>
-</ul>
+<p>Time Series Analysis experiments are designed for monitoring sensor data over time, offering insights into individual sensor behavior and enabling predictive maintenance through forecasting and anomaly detection.</p>
 <h3 id="prophet">Prophet</h3>
-<pre><code>##Add pycaret function params here
-load_object :
+<p>Prophet is excellent for time series forecasting with strong seasonal patterns and holiday effects.</p>
+<p><strong>Configuration Example:</strong></p>
+<pre><code class="language-yaml">load_object:
   module: framework.TimeSeriesAnalysis
-  name:  TimeSeriesAnomalyExperiment
+  name: TimeSeriesAnomalyExperiment
 setup: 
-    ds : ${ds} #-&gt; datetime changes with dataset
-    target : ${y} # -&gt; time series column name, changes with dataset
+  datetime_column: &quot;ds&quot;
+  datetime_format: &quot;ms&quot;
+  target: &quot;y&quot;
+  predict_window: 1000
+  retrain:
+    retrain_window: 5000
+    metric: &quot;MAPE&quot;
+    metric_threshold: 0.3
+    higher_better: false
 eda:
-create_model :
-    model : &quot;prophet&quot;
-    params:
-      periods : 0 # Int number of periods to forecast forward. Has not been tested.
-      factor : 1.0 # anomaly detection factor
+create_model:
+  model: &quot;prophet&quot;
+  params:
+    periods: 0
+    factor: 1.0
+    forecast_window: 100
+</code></pre>
+<p><strong>REST API Usage:</strong></p>
+<pre><code class="language-bash"># Train Prophet model
+curl -X POST &quot;http://localhost:8010/timeseries_prophet/train&quot; \
+  -H &quot;Content-Type: application/json&quot; \
+  -d '{
+    &quot;load_object&quot;: {
+      &quot;module&quot;: &quot;framework.TimeSeriesAnalysis&quot;,
+      &quot;name&quot;: &quot;TimeSeriesAnomalyExperiment&quot;
+    },
+    &quot;setup&quot;: {
+      &quot;datetime_column&quot;: &quot;ds&quot;,
+      &quot;target&quot;: &quot;y&quot;,
+      &quot;predict_window&quot;: 1000
+    },
+    &quot;create_model&quot;: {
+      &quot;model&quot;: &quot;prophet&quot;,
+      &quot;params&quot;: {
+        &quot;periods&quot;: 0,
+        &quot;factor&quot;: 1.0,
+        &quot;forecast_window&quot;: 100
+      }
+    }
+  }'
 
+# Make predictions
+curl -X POST &quot;http://localhost:8010/timeseries_prophet/predict&quot;
+
+# Get forecast plot
+curl &quot;http://localhost:8010/timeseries_prophet/plot/forecast&quot;
 </code></pre>
-<h3 id="ssa">SSA</h3>
-<pre><code>load_object :
+<p><strong>Parameters:</strong>
+- <code>periods</code>: Number of periods to forecast forward
+- <code>factor</code>: Anomaly detection factor
+- <code>forecast_window</code>: Number of future points to predict</p>
+<h3 id="arimasarima">ARIMA/SARIMA</h3>
+<p>ARIMA models are ideal for stationary time series with clear autoregressive patterns.</p>
+<p><strong>Configuration Example:</strong></p>
+<pre><code class="language-yaml">load_object:
   module: framework.TimeSeriesAnalysis
-  name:  TimeSeriesAnomalyExperiment
+  name: TimeSeriesAnomalyExperiment
 setup: 
-    ds : ${ds} #-&gt; datetime changes with dataset
-    target : ${y} # -&gt; time series column name, changes with dataset
+  datetime_column: &quot;ds&quot;
+  target: &quot;y&quot;
 eda:
-create_model :
-    model : &quot;ssa&quot;
-    params:
-      window_size : 10
-      lower_frequency_bound : 0.05
-      lower_frequency_contribution : 0.975
-      threshold : 3
+create_model:
+  model: &quot;arima&quot;
+  params:  
+    start_p: 10
+    d: 1
+    start_q: 10
+    max_p: 100
+    max_q: 100
+    seasonal: false
+    threshold_for_anomaly: 3
 </code></pre>
-<ul>
-<li>
-<p>window_size : int or float (default = 10)
-    Size of the sliding window (i.e. the size of each word). 
-    If float, it represents the percentage of the size of each time series and must be between 0 and 1.
-     The window size will be computed as max(2, ceil(window_size * n_timestamps)).</p>
-</li>
-<li>
-<p>lower_frequency_bound : float (default = 0.05)
-    The boundary of the periodogram to characterize trend, 
-    seasonal and residual components. It must be between 0 and 0.5. 
-    Ignored if groups is not set to 'auto'.</p>
-</li>
-<li>
-<p>lower_frequency_contribution : float (default = 0.975)
-    The relative threshold to characterize trend,
-     seasonal and residual components by considering the periodogram. 
-     It must be between 0 and 1. Ignored if groups is not set to 'auto'.</p>
-</li>
-<li>
-<p>threshold : float (default = 3)</p>
-</li>
-</ul>
-<h2 id="fault-detection">Fault Detection</h2>
-<p>Clustering</p>
-<h3 id="pca">PCA</h3>
-<pre><code>load_object :
-  module: framework.FaultDetection  
-  name: FaultDetectionExperiment
-setup:
-    # MUST NOT HAVE A data KEYWORD!
-    datetime_column : ${ds}
-create_model :
-    model : &quot;pca&quot; 
-    params:
-</code></pre>
-<p>Parameters (add to params):
-  alpha : float (default = 0.05)   Alpha is the threshold for the hotellings T2 test to determine outliers in the data.
-  detect_outliers : list[str] (default = ['ht2', 'spe']) Type of outlier detections. Types: hotellings T2 and SPE (from center distance)
-  n_components : float  (default = 0.95) Amount of variance the relevant principal components explain 
-  normalize : bool (default = True) Normalize data (currently not relevant)</p>
-<h3 id="dbscan">DBSCAN</h3>
-<pre><code>load_object : 
-  module: framework.FaultDetection  
-  name: FaultDetectionExperiment
-setup:
-    # MUST NOT HAVE A data KEYWORD!
-    datetime_column : ${ds}
-create_model :
-    model : &quot;dbscan&quot;
-    params:
-      eps : 2 # The maximum distance between two samples 
-      #for one to be considered as in the neighborhood of the other.
-      #Will define the strictness of anomaly detection
-      min_samples :  # Automatically defined as twice the variables.
-      # The number of samples (or total weight) in a neighborhood for a point to be considered as a core point.
-</code></pre>
-<h3 id="elliptic-envelope">Elliptic Envelope</h3>
-<pre><code>load_object : 
-  module: framework.FaultDetection  
-  name: FaultDetectionExperiment
+<p><strong>Parameters:</strong>
+- <code>start_p</code>: Starting value for autoregressive order
+- <code>d</code>: Differencing order
+- <code>start_q</code>: Starting value for moving average order
+- <code>max_p/max_q</code>: Maximum values for parameter search
+- <code>seasonal</code>: Enable seasonal ARIMA (SARIMA)
+- <code>threshold_for_anomaly</code>: Standard deviations for anomaly detection</p>
+<h3 id="lstm">LSTM</h3>
+<p>Long Short-Term Memory networks for complex temporal patterns and non-linear relationships.</p>
+<p><strong>Configuration Example:</strong></p>
+<pre><code class="language-yaml">load_object:
+  module: framework.TimeSeriesAnalysis
+  name: TimeSeriesAnomalyExperiment
 setup: 
-    # MUST NOT HAVE A data KEYWORD!
-    datetime_column :  ${ds}
-create_model :
-    model : &quot;ee&quot; # EllipticEnvelope
-    params:
-      contamination : 0.1 # between 0 and 0.5
-      # How much anomalies?
+  datetime_column: &quot;ds&quot;
+  target: &quot;y&quot;
+eda:
+create_model:
+  model: &quot;lstm&quot;
+  params:
+    seq_length: 50
+    layer_no: 2
+    cell_no: 64
+    epoch_no: 100
+    batch_size: 32
+    shuffle: true
+    patience: 10
+    threshold_for_anomaly: 3
 </code></pre>
+<p><strong>Parameters:</strong>
+- <code>seq_length</code>: Length of input sequences
+- <code>layer_no</code>: Number of LSTM layers
+- <code>cell_no</code>: Number of cells per LSTM layer
+- <code>epoch_no</code>: Training epochs
+- <code>batch_size</code>: Training batch size
+- <code>patience</code>: Early stopping patience
+- <code>threshold_for_anomaly</code>: Anomaly detection threshold</p>
+<h3 id="autoencoder">Autoencoder</h3>
+<p>Neural network autoencoders for anomaly detection in time series through reconstruction error.</p>
+<p><strong>Configuration Example:</strong></p>
+<pre><code class="language-yaml">load_object:
+  module: framework.TimeSeriesAnalysis
+  name: TimeSeriesAnomalyExperiment
+setup: 
+  datetime_column: &quot;ds&quot;
+  target: &quot;y&quot;
+eda:
+create_model:
+  model: &quot;ae&quot;
+  params:
+    layer_no: 6
+    window: 250
+    epoch_no: 50
+    batch_size: 64
+    shuffle: false
+    threshold_for_anomaly: 3
+    neuron_no_enc: [30, 25, 20, 15, 10, 5]
+    neuron_no_dec: [5, 10, 15, 20, 25, 30]
+    act_enc: 'relu'
+    act_dec: 'relu'
+</code></pre>
+<p><strong>Parameters:</strong>
+- <code>layer_no</code>: Number of layers in encoder/decoder
+- <code>window</code>: Moving window size for sequences
+- <code>neuron_no_enc/dec</code>: Neurons per layer in encoder/decoder
+- <code>act_enc/dec</code>: Activation functions</p>
+<h3 id="ssa-singular-spectrum-analysis">SSA (Singular Spectrum Analysis)</h3>
+<p>SSA for time series decomposition and anomaly detection.</p>
+<p><strong>Configuration Example:</strong></p>
+<pre><code class="language-yaml">load_object:
+  module: framework.TimeSeriesAnalysis
+  name: TimeSeriesAnomalyExperiment
+setup: 
+  datetime_column: &quot;ds&quot;
+  target: &quot;y&quot;
+eda:
+create_model:
+  model: &quot;ssa&quot;
+  params:
+    window_size: 10
+    lower_frequency_bound: 0.05
+    lower_frequency_contribution: 0.975
+    threshold: 3
+</code></pre>
+<h2 id="fault-detection">Fault Detection</h2>
+<p>Fault Detection experiments focus on unsupervised anomaly detection in multivariate sensor data, identifying deviations from normal operating conditions without requiring labeled data.</p>
 <h3 id="isolation-forest">Isolation Forest</h3>
-<pre><code>load_object :
+<p>Isolation Forest is highly effective for anomaly detection in high-dimensional data by isolating anomalies through random partitioning.</p>
+<p><strong>Configuration Example:</strong></p>
+<pre><code class="language-yaml">load_object:
   module: framework.FaultDetection  
   name: FaultDetectionExperiment
 setup:
-    # MUST NOT HAVE A data KEYWORD!
-    datetime_column : ${ds}
-create_model :
-    model : &quot;iforest&quot; 
-    params:
-      n_estimators : 100 # amount of tress used
-      contamination : &quot;auto&quot; # auto
-      random_state : 0
+  datetime_column: &quot;ds&quot;
+  datetime_format: &quot;ms&quot;
+eda:
+create_model:
+  model: &quot;iforest&quot;
+  params:
+    n_estimators: 100
+    contamination: &quot;auto&quot;
+    random_state: 0
 </code></pre>
+<p><strong>REST API Usage:</strong></p>
+<pre><code class="language-bash"># Train Isolation Forest model
+curl -X POST &quot;http://localhost:8010/pump_anomaly/train&quot; \
+  -H &quot;Content-Type: application/json&quot; \
+  -d '{
+    &quot;load_object&quot;: {
+      &quot;module&quot;: &quot;framework.FaultDetection&quot;,
+      &quot;name&quot;: &quot;FaultDetectionExperiment&quot;
+    },
+    &quot;setup&quot;: {
+      &quot;datetime_column&quot;: &quot;ds&quot;
+    },
+    &quot;create_model&quot;: {
+      &quot;model&quot;: &quot;iforest&quot;,
+      &quot;params&quot;: {
+        &quot;n_estimators&quot;: 100,
+        &quot;contamination&quot;: &quot;auto&quot;
+      }
+    }
+  }'
+
+# Detect anomalies in new data
+curl -X POST &quot;http://localhost:8010/pump_anomaly/predict&quot;
+
+# Get anomaly visualization
+curl &quot;http://localhost:8010/pump_anomaly/plot/outliers&quot;
+</code></pre>
+<p><strong>Parameters:</strong>
+- <code>n_estimators</code>: Number of isolation trees
+- <code>contamination</code>: Expected proportion of anomalies ("auto" for automatic detection)
+- <code>random_state</code>: Random seed for reproducibility</p>
+<h3 id="pca-principal-component-analysis">PCA (Principal Component Analysis)</h3>
+<p>PCA with Hotelling's T² and SPE tests for multivariate anomaly detection, as demonstrated in the research paper with pump sensor data.</p>
+<p><strong>Configuration Example:</strong></p>
+<pre><code class="language-yaml">load_object:
+  module: framework.FaultDetection  
+  name: FaultDetectionExperiment
+setup:
+  datetime_column: &quot;ds&quot;
+  datetime_format: &quot;ms&quot;
+eda:
+create_model:
+  model: &quot;pca&quot;
+  params:
+    alpha: 0.05
+    detect_outliers: ['ht2', 'spe']
+    n_components: 0.95
+    normalize: true
+</code></pre>
+<p><strong>Use Case Example (from research paper):</strong>
+The pump dataset contains 50 sensors without labeled data, making it ideal for fault detection. PCA reduces dimensionality while preserving 95% of variance, then applies statistical tests to identify anomalies.</p>
+<p><strong>Parameters:</strong>
+- <code>alpha</code>: Significance level for Hotelling's T² test
+- <code>detect_outliers</code>: Types of outlier detection ['ht2', 'spe']
+- <code>n_components</code>: Variance explained by principal components
+- <code>normalize</code>: Apply data normalization</p>
+<h3 id="dbscan">DBSCAN</h3>
+<p>Density-based clustering for anomaly detection, effective for identifying clusters of normal behavior.</p>
+<p><strong>Configuration Example:</strong></p>
+<pre><code class="language-yaml">load_object:
+  module: framework.FaultDetection  
+  name: FaultDetectionExperiment
+setup:
+  datetime_column: &quot;ds&quot;
+  datetime_format: &quot;ms&quot;
+eda:
+create_model:
+  model: &quot;dbscan&quot;
+  params:
+    eps: 2
+    min_samples: 5
+</code></pre>
+<p><strong>Parameters:</strong>
+- <code>eps</code>: Maximum distance between points in a neighborhood
+- <code>min_samples</code>: Minimum points required to form a cluster</p>
+<h3 id="elliptic-envelope">Elliptic Envelope</h3>
+<p>Robust covariance estimation for outlier detection in multivariate data.</p>
+<p><strong>Configuration Example:</strong></p>
+<pre><code class="language-yaml">load_object:
+  module: framework.FaultDetection  
+  name: FaultDetectionExperiment
+setup:
+  datetime_column: &quot;ds&quot;
+  datetime_format: &quot;ms&quot;
+eda:
+create_model:
+  model: &quot;ee&quot;
+  params:
+    contamination: 0.1
+</code></pre>
+<p><strong>Parameters:</strong>
+- <code>contamination</code>: Proportion of outliers in the dataset (0.0 to 0.5)</p>
+<h2 id="fault-isolation">Fault Isolation</h2>
+<p>Fault Isolation experiments perform supervised classification when labeled data is available, enabling root cause analysis and identification of specific fault types or machine states.</p>
+<h3 id="decision-tree">Decision Tree</h3>
+<p>Decision trees provide interpretable classification with feature importance analysis, as demonstrated in the research paper with electrical circuit data.</p>
+<p><strong>Configuration Example:</strong></p>
+<pre><code class="language-yaml">load_object:
+  module: framework.FaultIsolation
+  name: FaultIsolationExperiment
+setup:
+  datetime_column: &quot;ds&quot;
+  datetime_format: &quot;ms&quot;
+  target: &quot;Output (S)&quot;
+  predict_window: 1000
+  retrain:
+    retrain_window: 5000
+    metric: &quot;Accuracy&quot;
+    metric_threshold: 0.9
+    higher_better: true
+eda:
+create_model:
+  model: &quot;dt&quot;
+  params:
+</code></pre>
+<p><strong>REST API Usage:</strong></p>
+<pre><code class="language-bash"># Train Decision Tree for fault isolation
+curl -X POST &quot;http://localhost:8010/electrical_faults/train&quot; \
+  -H &quot;Content-Type: application/json&quot; \
+  -d '{
+    &quot;load_object&quot;: {
+      &quot;module&quot;: &quot;framework.FaultIsolation&quot;,
+      &quot;name&quot;: &quot;FaultIsolationExperiment&quot;
+    },
+    &quot;setup&quot;: {
+      &quot;datetime_column&quot;: &quot;ds&quot;,
+      &quot;target&quot;: &quot;Output (S)&quot;,
+      &quot;predict_window&quot;: 1000
+    },
+    &quot;create_model&quot;: {
+      &quot;model&quot;: &quot;dt&quot;,
+      &quot;params&quot;: {}
+    }
+  }'
+
+# Classify new faults
+curl -X POST &quot;http://localhost:8010/electrical_faults/predict&quot;
+
+# Get feature importance plot
+curl &quot;http://localhost:8010/electrical_faults/plot/feature_importance&quot;
+
+# Get confusion matrix
+curl &quot;http://localhost:8010/electrical_faults/plot/confusion_matrix&quot;
+</code></pre>
+<p><strong>Use Case Example (from research paper):</strong>
+Electrical circuit monitoring with 3-phase electricity data (Va, Vb, Vc voltages and Ia, Ib, Ic currents). The decision tree identifies which sensors contribute most to fault detection, with current Ib showing highest feature importance.</p>
+<h3 id="random-forest">Random Forest</h3>
+<p>Ensemble method combining multiple decision trees for robust classification.</p>
+<p><strong>Configuration Example:</strong></p>
+<pre><code class="language-yaml">load_object:
+  module: framework.FaultIsolation
+  name: FaultIsolationExperiment
+setup:
+  datetime_column: &quot;ds&quot;
+  target: &quot;fault_type&quot;
+eda:
+create_model:
+  model: &quot;rf&quot;
+  params:
+    n_estimators: 100
+    max_depth: 10
+    random_state: 42
+</code></pre>
+<h3 id="naive-bayes">Naive Bayes</h3>
+<p>Probabilistic classifier based on Bayes' theorem, effective for categorical fault classification.</p>
+<p><strong>Configuration Example:</strong></p>
+<pre><code class="language-yaml">load_object:
+  module: framework.FaultIsolation
+  name: FaultIsolationExperiment
+setup:
+  datetime_column: &quot;ds&quot;
+  target: &quot;fault_category&quot;
+eda:
+create_model:
+  model: &quot;nb&quot;
+  params:
+</code></pre>
+<h3 id="hidden-markov-models-hmm">Hidden Markov Models (HMM)</h3>
+<p>HMM for sequential fault pattern recognition and state-based fault isolation.</p>
+<p><strong>Configuration Example:</strong></p>
+<pre><code class="language-yaml">load_object:
+  module: framework.FaultIsolation
+  name: FaultIsolationExperiment
+setup:
+  datetime_column: &quot;ds&quot;
+  target: &quot;machine_state&quot;
+eda:
+create_model:
+  model: &quot;hmm&quot;
+  params:
+    n_iter: 1000
+    covariance_type: &quot;diag&quot;
+    n_mix: 10
+</code></pre>
+<p><strong>Parameters:</strong>
+- <code>n_iter</code>: Maximum number of EM iterations
+- <code>covariance_type</code>: Type of covariance matrix
+- <code>n_mix</code>: Number of mixture components</p>
+<h3 id="bayesian-network">Bayesian Network</h3>
+<p>Probabilistic graphical model for understanding causal relationships between variables.</p>
+<p><strong>Configuration Example:</strong></p>
+<pre><code class="language-yaml">load_object:
+  module: framework.FaultIsolation
+  name: FaultIsolationExperiment
+setup:
+  datetime_column: &quot;ds&quot;
+  target: &quot;fault_root_cause&quot;
+eda:
+create_model:
+  model: &quot;bn&quot;
+  params: 
+    learningMethod: 'MIIC'
+    prior: 'Smoothing'
+    priorWeight: 1
+    discretizationNbBins: 30
+    discretizationStrategy: &quot;quantile&quot;
+    discretizationThreshold: 0.01
+    usePR: false
+</code></pre>
+<p><strong>Note:</strong> Bayesian Network prediction requires target variable and may have Docker compatibility issues with pyAgrum.</p>
 <h2 id="process-mining">Process Mining</h2>
-<h3 id="heuristicsminer">HeuristicsMiner</h3>
-<pre><code>load_object :
+<p>Process Mining experiments analyze sequential data to understand workflows, operator behavior, and process optimization opportunities.</p>
+<h3 id="heuristics-miner">Heuristics Miner</h3>
+<p>Discovers process models from event logs using heuristic rules.</p>
+<p><strong>Configuration Example:</strong></p>
+<pre><code class="language-yaml">load_object:
   module: framework.ProcessMining
   name: ProcessMiningExperiment
 setup:
-create_model :
-    model : &quot;heuristics&quot;
-    params : 
+eda:
+create_model:
+  model: &quot;heuristics&quot;
+  params:
 </code></pre>
-<h3 id="topkrules">TopKRules</h3>
-<pre><code>load_object :
+<h3 id="apriori-association-rules">Apriori Association Rules</h3>
+<p>Finds frequent patterns and association rules in sequential data.</p>
+<p><strong>Configuration Example:</strong></p>
+<pre><code class="language-yaml">load_object:
   module: framework.ProcessMining
   name: ProcessMiningExperiment
 setup:
-create_model :
-    model : &quot;topk&quot;
-    params : 
+eda:
+create_model:
+  model: &quot;apriori&quot;
+  params:
+    min_support: 0.1
+    min_confidence: 0.8
 </code></pre>
-<h3 id="apriori-association-rules">Apriori association rules</h3>
-<pre><code>load_object :
+<h3 id="topk-rules">TopK Rules</h3>
+<p>Discovers the top-K most interesting association rules.</p>
+<p><strong>Configuration Example:</strong></p>
+<pre><code class="language-yaml">load_object:
   module: framework.ProcessMining
   name: ProcessMiningExperiment
 setup:
-create_model :
-    model : &quot;apriori&quot;
-    params : 
+eda:
+create_model:
+  model: &quot;topk&quot;
+  params:
+    k: 100
+    min_confidence: 0.5
 </code></pre>
 <h3 id="cmspam">CMSPAM</h3>
-<pre><code>load_object :
+<p>Closed sequential pattern mining for discovering frequent subsequences.</p>
+<p><strong>Configuration Example:</strong></p>
+<pre><code class="language-yaml">load_object:
   module: framework.ProcessMining
   name: ProcessMiningExperiment
 setup:
-create_model :
-    model : &quot;cmspam&quot; 
-    params : 
+eda:
+create_model:
+  model: &quot;cmspam&quot;
+  params:
+    min_support: 0.1
 </code></pre>
+<h2 id="advanced-configuration-options">Advanced Configuration Options</h2>
+<h3 id="automatic-retraining">Automatic Retraining</h3>
+<p>Configure automatic model retraining based on performance metrics:</p>
+<pre><code class="language-yaml">setup:
+  retrain:
+    retrain_window: 5000        # Use last 5000 samples for retraining
+    metric: &quot;Accuracy&quot;          # Metric to monitor (Accuracy, F1, Precision, Recall, MAPE, MSE)
+    metric_threshold: 0.9       # Threshold that triggers retraining
+    higher_better: true         # Whether higher metric values are better
+</code></pre>
+<h3 id="data-formatting">Data Formatting</h3>
+<p>Handle different data formats with custom formatting options:</p>
+<pre><code class="language-yaml">setup:
+  format:
+    name: &quot;pivot&quot;               # Formatting mode
+    id: &quot;tsdata&quot;               # Data variable name
+    max_level: 1
+    columns: &quot;target&quot;
+    index: &quot;date&quot;
+    values: &quot;value&quot;
+</code></pre>
+<h3 id="prediction-windows">Prediction Windows</h3>
+<p>Control visualization and prediction scope:</p>
+<pre><code class="language-yaml">setup:
+  predict_window: 1000          # Number of samples to show in prediction plots
+  forecast_window: 100          # Number of future points to predict
+</code></pre>
+<h2 id="rest-api-patterns">REST API Patterns</h2>
+<h3 id="common-endpoints">Common Endpoints</h3>
+<p>All experiments support these standard endpoints:</p>
+<ul>
+<li><code>POST /{experiment_name}/train</code> - Train a new model</li>
+<li><code>POST /{experiment_name}/predict</code> - Make predictions</li>
+<li><code>POST /{experiment_name}/save</code> - Save model to MLflow</li>
+<li><code>POST /{experiment_name}/load</code> - Load model from MLflow</li>
+<li><code>GET /{experiment_name}/plot/{plot_name}</code> - Get visualization</li>
+<li><code>GET /{experiment_name}/cfg</code> - Get configuration</li>
+<li><code>GET /{experiment_name}/run_id</code> - Get MLflow run ID</li>
+</ul>
+<h3 id="batch-processing-example">Batch Processing Example</h3>
+<pre><code class="language-bash"># Train multiple models in sequence
+for model in &quot;iforest&quot; &quot;pca&quot; &quot;dbscan&quot;; do
+  curl -X POST &quot;http://localhost:8010/sensor_${model}/train&quot; \
+    -H &quot;Content-Type: application/json&quot; \
+    -d @configs/pump/${model}.yaml
+done
+
+# Monitor all models
+for model in &quot;iforest&quot; &quot;pca&quot; &quot;dbscan&quot;; do
+  curl -X POST &quot;http://localhost:8010/sensor_${model}/predict&quot;
+done
+</code></pre>
+<h2 id="model-selection-guidelines">Model Selection Guidelines</h2>
+<h3 id="time-series-analysis_1">Time Series Analysis</h3>
+<ul>
+<li><strong>Prophet</strong>: Strong seasonality, holiday effects, missing data tolerance</li>
+<li><strong>ARIMA</strong>: Stationary data, clear autoregressive patterns</li>
+<li><strong>LSTM</strong>: Complex non-linear patterns, large datasets</li>
+<li><strong>Autoencoder</strong>: Anomaly detection, reconstruction-based analysis</li>
+<li><strong>SSA</strong>: Trend and seasonal decomposition</li>
+</ul>
+<h3 id="fault-detection_1">Fault Detection</h3>
+<ul>
+<li><strong>Isolation Forest</strong>: High-dimensional data, unknown anomaly types</li>
+<li><strong>PCA</strong>: Multivariate data, statistical anomaly detection</li>
+<li><strong>DBSCAN</strong>: Density-based clusters, irregular cluster shapes</li>
+<li><strong>Elliptic Envelope</strong>: Gaussian-distributed data, robust outlier detection</li>
+</ul>
+<h3 id="fault-isolation_1">Fault Isolation</h3>
+<ul>
+<li><strong>Decision Tree</strong>: Interpretability required, feature importance analysis</li>
+<li><strong>Random Forest</strong>: Robust classification, ensemble benefits</li>
+<li><strong>Naive Bayes</strong>: Categorical features, probabilistic classification</li>
+<li><strong>HMM</strong>: Sequential patterns, state-based analysis</li>
+<li><strong>Bayesian Network</strong>: Causal relationships, probabilistic inference</li>
+</ul>
+<h3 id="process-mining_1">Process Mining</h3>
+<ul>
+<li><strong>Heuristics Miner</strong>: Process discovery from event logs</li>
+<li><strong>Apriori</strong>: Frequent pattern mining, association rules</li>
+<li><strong>TopK Rules</strong>: Most interesting patterns, rule ranking</li>
+<li><strong>CMSPAM</strong>: Sequential pattern mining, closed patterns</li>
+</ul>
+<h2 id="troubleshooting">Troubleshooting</h2>
+<h3 id="common-issues">Common Issues</h3>
+<ol>
+<li><strong>BayesNet Docker Issues</strong>: Works locally but may fail in Docker due to pyAgrum compilation requirements</li>
+<li><strong>PCA Indexing</strong>: Avoid duplicate indices in input data</li>
+<li><strong>Process Mining</strong>: Some models repeat training during prediction phase</li>
+<li><strong>Memory Requirements</strong>: Deep learning models (LSTM, Autoencoder) require sufficient RAM</li>
+</ol>
+<h3 id="performance-optimization">Performance Optimization</h3>
+<ul>
+<li>Use appropriate <code>predict_window</code> sizes to balance visualization and performance</li>
+<li>Configure <code>retrain_window</code> based on data velocity and model stability</li>
+<li>Monitor MLflow for model performance metrics and storage usage</li>
+<li>Use batch processing for multiple model training</li>
+</ul>
+<p>This comprehensive guide provides the foundation for implementing robust monitoring solutions with ObServML across various industrial applications and use cases.</p>
               
             </div>
           </div><footer>
