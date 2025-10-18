@@ -2,14 +2,14 @@ services:
   rabbit:
     image: rabbitmq:3.12.14-management-alpine
     ports:
-      - 5100:5672
-      - 15100:15672
+      - 5672:5672
+      - 15672:15672
     networks:
        - mml_network
     restart:
       on-failure
   mlflow:
-    image: mmlw:mlflow
+    image: observml:mlflow
     ports:
       - 5000:5000
     networks:
@@ -17,7 +17,7 @@ services:
     restart:
       on-failure
   backend:
-    image: mmlw:backend
+    image: observml:service
     ports :
       - 8010:8010
     depends_on:
@@ -31,13 +31,14 @@ services:
       RABBIT_PORT : "5672"
       RABBIT_USER : "guest"
       RABBIT_PASSWORD : "guest"
+      HUB_CONFIG_PATH : "USE THIS IF YOU MAKE CUSTOM IMAGE"
     restart:
       on-failure
     networks:
       - mml_network
 
   frontend:
-    image: mmlw:frontend    
+    image: observml:frontend    
     ports:
       - 8501:8501
     depends_on:
